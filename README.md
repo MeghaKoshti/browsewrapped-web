@@ -1,16 +1,93 @@
-# React + Vite
+# BrowseWrapped Web
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+BrowseWrapped transforms browser history into an interactive visualization of your learning journey, interests, and online habits.
 
-Currently, two official plugins are available:
+Inspired by Spotify Wrapped, BrowseWrapped helps users discover:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+* Knowledge maps
+* Learning timelines
+* Interest trends
+* Search evolution
+* Topic exploration
+* Skill development patterns
 
-## React Compiler
+## Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Interactive Analytics
 
-## Expanding the ESLint configuration
+* Topic distribution charts
+* Interest growth tracking
+* Learning journey timeline
+* Domain analytics
+* Search behavior insights
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### Visualizations
+
+* Knowledge graphs
+* Topic relationship networks
+* Time-based activity charts
+* Trend analysis dashboards
+
+### Privacy First
+
+* Browser history is processed securely
+* Users control uploaded data
+* No unnecessary tracking
+
+## Tech Stack
+
+* React
+* Vite
+* Tailwind CSS v4
+* Recharts
+* React Flow
+* Axios
+* React Router
+
+## Development
+
+### Prerequisites
+
+* Node.js
+* npm
+
+If using mise:
+
+```bash
+mise install
+mise trust
+```
+
+### Setup
+
+```bash
+npm install
+npm run dev
+```
+
+### Build
+
+```bash
+npm run build
+```
+
+## API
+
+This application consumes data from the BrowseWrapped API:
+
+https://github.com/MeghaKoshti/browsewrapped-api
+
+## Project Status
+
+🚧 Early Development
+
+Currently building:
+
+* Browser history ingestion
+* Topic analytics
+* Interactive dashboards
+* Knowledge graph visualization
+
+## Author
+
+Megha Koshti
