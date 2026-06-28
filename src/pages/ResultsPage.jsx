@@ -3,17 +3,20 @@ import { useLocation, useNavigate, Link } from 'react-router-dom'
 import StatCard from '../components/ui/StatCard'
 import SectionHeader from '../components/ui/SectionHeader'
 import HistoryFingerprint from '../components/ui/HistoryFingerprint'
+import PersonaCard from '../components/stats/PersonaCard'
+import SessionStats from '../components/stats/SessionStats'
+import IntentChart from '../components/stats/IntentChart'
 import TopicsDonut from '../components/charts/TopicsDonut'
 import DailyPattern from '../components/charts/DailyPattern'
 import WeeklyPattern from '../components/charts/WeeklyPattern'
 import MonthlyTrends from '../components/charts/MonthlyTrends'
 import TimeByTopic from '../components/charts/TimeByTopic'
 import Heatmap from '../components/charts/Heatmap'
+import ActivityCalendar from '../components/charts/ActivityCalendar'
+import TopicMomentum from '../components/charts/TopicMomentum'
 import TopDomains from '../components/domain/TopDomains'
 import TopPages from '../components/domain/TopPages'
 import SearchCloud from '../components/search/SearchCloud'
-import SessionStats from '../components/stats/SessionStats'
-import IntentChart from '../components/stats/IntentChart'
 import KnowledgeMap from '../components/graph/KnowledgeMap'
 
 function fmt(n) {
@@ -34,9 +37,9 @@ function Section({ children, className = '' }) {
 
 export default function ResultsPage() {
   const { state } = useLocation()
-  const navigate = useNavigate()
-  const data = state?.data
-  const filename = state?.filename
+  const navigate  = useNavigate()
+  const data      = state?.data
+  const filename  = state?.filename
 
   useEffect(() => {
     if (!data) navigate('/', { replace: true })
@@ -45,30 +48,30 @@ export default function ResultsPage() {
   if (!data) return null
 
   const {
-    summary, topics, time_by_topic, daily_pattern, weekly_pattern,
-    monthly_trends, heatmap, sessions, top_domains, top_pages,
-    top_searches, chrome_searches, intent, knowledge_graph, meta,
+    summary, persona, topics, time_by_topic, daily_pattern, weekly_pattern,
+    monthly_trends, heatmap, activity_calendar, sessions, streaks, topic_momentum,
+    top_domains, top_pages, top_searches, chrome_searches, intent,
+    knowledge_graph, meta,
   } = data
 
-  const topTopicColor    = topics?.find((t) => t.name === summary.top_topic)?.color || '#a855f7'
-  const hasTimestamps    = summary.has_timestamps
-  const hasDuration      = summary.has_duration_data && time_by_topic?.length > 0
-  const hasSearches      = (chrome_searches?.length || top_searches?.length) > 0
-  const hasGraph         = knowledge_graph?.nodes?.length > 1
-  const hasTrends        = monthly_trends?.data?.length > 1
-  const hasHeatmap       = heatmap?.max > 0
-  const hasWeekly        = weekly_pattern?.some((d) => d.visits > 0)
-  const hasIntent        = intent && (intent.typed_pct > 0 || intent.link_pct > 0)
-  const hasPages         = top_pages?.length > 0
-  const hasSessions      = sessions?.total_sessions > 0
-  const activeSearches   = chrome_searches?.length > 0 ? chrome_searches : top_searches
+  const topTopicColor   = topics?.find((t) => t.name === summary.top_topic)?.color || '#a855f7'
+  const hasTimestamps   = summary.has_timestamps
+  const hasDuration     = summary.has_duration_data && time_by_topic?.length > 0
+  const hasSearches     = (chrome_searches?.length || top_searches?.length) > 0
+  const hasGraph        = knowledge_graph?.nodes?.length > 1
+  const hasTrends       = monthly_trends?.data?.length > 1
+  const hasHeatmap      = heatmap?.max > 0
+  const hasCalendar     = activity_calendar?.days?.length > 0 && activity_calendar?.max > 0
+  const hasWeekly       = weekly_pattern?.some((d) => d.visits > 0)
+  const hasIntent       = intent && (intent.typed_pct > 0 || intent.link_pct > 0)
+  const hasPages        = top_pages?.length > 0
+  const hasSessions     = sessions?.total_sessions > 0
+  const hasMomentum     = topic_momentum?.rising?.length > 0 || topic_momentum?.falling?.length > 0
+  const activeSearches  = chrome_searches?.length > 0 ? chrome_searches : top_searches
 
   const year = summary.date_range?.start?.slice(0, 4) || new Date().getFullYear()
 
-  // Stat card values
-  const hoursVal = summary.total_hours_browsed > 0
-    ? `${summary.total_hours_browsed}h`
-    : fmt(summary.unique_domains)
+  const hoursVal   = summary.total_hours_browsed > 0 ? `${summary.total_hours_browsed}h` : fmt(summary.unique_domains)
   const hoursLabel = summary.total_hours_browsed > 0 ? 'Hours browsed' : 'Sites explored'
   const hoursColor = summary.total_hours_browsed > 0 ? '#f59e0b' : '#06b6d4'
 
@@ -83,7 +86,7 @@ export default function ResultsPage() {
         <div style={{ maxWidth: 980, margin: '0 auto', padding: '12px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <Link
             to="/"
-            style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, color: 'var(--muted)', textDecoration: 'none', transition: 'color 0.15s' }}
+            style={{ fontSize: 13, color: 'var(--muted)', textDecoration: 'none', transition: 'color 0.15s' }}
             onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text)'}
             onMouseLeave={(e) => e.currentTarget.style.color = 'var(--muted)'}
           >
@@ -93,12 +96,13 @@ export default function ResultsPage() {
             BrowseWrapped
           </span>
           <span className="mono" style={{ fontSize: 11, color: 'var(--muted)' }}>
-            {meta?.total_entries_parsed?.toLocaleString()} entries · {meta?.source === 'chrome_direct' ? 'Chrome' : 'upload'}
+            {meta?.total_entries_parsed?.toLocaleString()} entries
+            {meta?.source === 'chrome_direct' ? ' · Chrome' : ' · upload'}
           </span>
         </div>
       </header>
 
-      {/* ── Hero banner ── */}
+      {/* ── Hero ── */}
       <div style={{ position: 'relative', overflow: 'hidden', borderBottom: '1px solid var(--border)' }}>
         <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse 60% 100% at 50% 0%, rgba(168,85,247,0.12), transparent)', pointerEvents: 'none' }} />
         <div style={{ maxWidth: 980, margin: '0 auto', padding: '48px 20px 40px', textAlign: 'center', position: 'relative' }}>
@@ -110,9 +114,7 @@ export default function ResultsPage() {
             {year} Wrapped
           </h1>
           {filename && (
-            <p className="mono" style={{ marginTop: 10, fontSize: 11, color: 'var(--muted)', letterSpacing: '0.06em' }}>
-              {filename}
-            </p>
+            <p className="mono" style={{ marginTop: 10, fontSize: 11, color: 'var(--muted)', letterSpacing: '0.06em' }}>{filename}</p>
           )}
           {summary.date_range && (
             <p className="mono" style={{ marginTop: 4, fontSize: 11, color: 'var(--muted)' }}>
@@ -130,10 +132,13 @@ export default function ResultsPage() {
       {/* ── Main content ── */}
       <main style={{ maxWidth: 980, margin: '0 auto', padding: '32px 20px 0', display: 'flex', flexDirection: 'column', gap: 20 }}>
 
+        {/* ─ Persona ─ */}
+        {persona && <PersonaCard persona={persona} />}
+
         {/* ─ Stat cards ─ */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 14 }}>
-          <StatCard label="Total visits" value={fmt(summary.total_visits)} color="#a855f7" />
-          <StatCard label={hoursLabel} value={hoursVal} color={hoursColor} />
+          <StatCard label="Total visits"  value={fmt(summary.total_visits)} color="#a855f7" />
+          <StatCard label={hoursLabel}    value={hoursVal}   color={hoursColor} />
           <StatCard
             label="Top interest"
             value={summary.top_topic}
@@ -148,19 +153,19 @@ export default function ResultsPage() {
           />
         </div>
 
-        {/* ─ Time spent by topic ─ */}
+        {/* ─ Time by topic ─ */}
         {hasDuration && (
           <Section>
             <SectionHeader
               label="Time Spent"
               title="Where Your Hours Went"
-              description="Actual browsing time measured per topic category"
+              description="Actual foreground browsing time per topic category"
             />
             <TimeByTopic timeByTopic={time_by_topic} />
           </Section>
         )}
 
-        {/* ─ Session stats ─ */}
+        {/* ─ Session stats + streaks ─ */}
         {hasSessions && (
           <Section>
             <SectionHeader
@@ -168,7 +173,7 @@ export default function ResultsPage() {
               title="How You Browse"
               description="A session ends after 30 minutes of inactivity"
             />
-            <SessionStats sessions={sessions} summary={summary} />
+            <SessionStats sessions={sessions} summary={summary} streaks={streaks} />
           </Section>
         )}
 
@@ -184,27 +189,35 @@ export default function ResultsPage() {
           </Section>
         </div>
 
-        {/* ─ Browsing heatmap ─ */}
+        {/* ─ Activity calendar ─ */}
+        {hasCalendar && (
+          <Section>
+            <SectionHeader
+              label="Activity Calendar"
+              title="Your Browsing History"
+              description="Daily activity over the past year — darker = more visits"
+            />
+            <ActivityCalendar calendar={activity_calendar} />
+          </Section>
+        )}
+
+        {/* ─ Heatmap ─ */}
         {hasHeatmap && (
           <Section>
             <SectionHeader
-              label="Activity Heatmap"
+              label="Heatmap"
               title="Your Browsing Rhythm"
-              description="Day × hour grid — darker cells mean more visits"
+              description="Day × hour — when you browse most"
             />
             <Heatmap heatmap={heatmap} />
           </Section>
         )}
 
-        {/* ─ Daily + Weekly patterns ─ */}
+        {/* ─ Daily + Weekly ─ */}
         {hasTimestamps && (
-          <div style={{ display: 'grid', gridTemplateColumns: '3fr 2fr', gap: 20 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: hasWeekly ? '3fr 2fr' : '1fr', gap: 20 }}>
             <Section>
-              <SectionHeader
-                label="Daily Pattern"
-                title="When You Browse"
-                description="Hourly activity across all days"
-              />
+              <SectionHeader label="Daily Pattern" title="When You Browse" description="Hourly activity" />
               <DailyPattern data={daily_pattern} />
               {(() => {
                 const peak = daily_pattern?.reduce((a, b) => b.visits > a.visits ? b : a, daily_pattern[0])
@@ -218,11 +231,7 @@ export default function ResultsPage() {
             </Section>
             {hasWeekly && (
               <Section>
-                <SectionHeader
-                  label="Weekly Pattern"
-                  title="Your Week"
-                  description="Mon–Sun distribution"
-                />
+                <SectionHeader label="Weekly Pattern" title="Your Week" description="Mon–Sun" />
                 <WeeklyPattern data={weekly_pattern} />
                 {(() => {
                   const peak = weekly_pattern?.reduce((a, b) => b.visits > a.visits ? b : a, weekly_pattern[0])
@@ -237,38 +246,42 @@ export default function ResultsPage() {
           </div>
         )}
 
-        {/* ─ How you browse (intent) ─ */}
-        {hasIntent && (
+        {/* ─ Topic momentum ─ */}
+        {hasMomentum && (
           <Section>
             <SectionHeader
-              label="Navigation"
-              title="How You Discover Content"
-              description="How you got to each page — typed URL, via search, or clicked a link"
+              label="Interest Shift"
+              title="What's Changing"
+              description="How your browsing interests evolved over this period"
             />
-            <IntentChart intent={intent} />
+            <TopicMomentum momentum={topic_momentum} />
           </Section>
         )}
 
         {/* ─ Monthly trends ─ */}
         {hasTimestamps && hasTrends && (
           <Section>
-            <SectionHeader
-              label="Interest Evolution"
-              title="How Your Curiosity Shifted"
-              description="Topic visits month by month"
-            />
+            <SectionHeader label="Interest Evolution" title="How Your Curiosity Shifted" description="Topic visits month by month" />
             <MonthlyTrends monthlyTrends={monthly_trends} />
+          </Section>
+        )}
+
+        {/* ─ Intent analysis ─ */}
+        {hasIntent && (
+          <Section>
+            <SectionHeader
+              label="Navigation"
+              title="How You Discover Content"
+              description="Whether you typed the URL, came via search, or clicked a link"
+            />
+            <IntentChart intent={intent} />
           </Section>
         )}
 
         {/* ─ Top individual pages ─ */}
         {hasPages && (
           <Section>
-            <SectionHeader
-              label="Top Pages"
-              title="Your Most-Visited Destinations"
-              description="Individual pages ranked by visit count"
-            />
+            <SectionHeader label="Top Pages" title="Your Most-Visited Destinations" description="Individual pages by visit count" />
             <TopPages pages={top_pages} />
           </Section>
         )}
@@ -281,8 +294,8 @@ export default function ResultsPage() {
               title="What You Were Looking For"
               description={
                 chrome_searches?.length
-                  ? `${chrome_searches.length} unique search terms from Chrome's omnibox`
-                  : 'Your most frequent queries — size reflects search frequency'
+                  ? `${chrome_searches.length} unique search terms from Chrome's omnibox history`
+                  : 'Your most frequent queries'
               }
             />
             <SearchCloud searches={activeSearches} />
