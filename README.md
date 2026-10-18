@@ -1,5 +1,7 @@
 # BrowseWrapped Web
 
+[![CI](https://github.com/MeghaKoshti/browsewrapped-web/actions/workflows/ci.yml/badge.svg)](https://github.com/MeghaKoshti/browsewrapped-web/actions/workflows/ci.yml)
+
 **BrowseWrapped turns your browser history into a "Spotify Wrapped"-style report**: what you explored, when you browse, which topics are growing, and a knowledge map of your interests.
 
 This repo is the **React frontend**. The analysis happens in the Rails API: [browsewrapped-api](https://github.com/MeghaKoshti/browsewrapped-api).
