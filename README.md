@@ -1,69 +1,59 @@
 # BrowseWrapped Web
 
-BrowseWrapped transforms browser history into an interactive visualization of your learning journey, interests, and online habits.
+**BrowseWrapped turns your browser history into a "Spotify Wrapped"-style report**: what you explored, when you browse, which topics are growing, and a knowledge map of your interests.
 
-Inspired by Spotify Wrapped, BrowseWrapped helps users discover:
+This repo is the **React frontend**. The analysis happens in the Rails API: [browsewrapped-api](https://github.com/MeghaKoshti/browsewrapped-api).
 
-* Knowledge maps
-* Learning timelines
-* Interest trends
-* Search evolution
-* Topic exploration
-* Skill development patterns
+![BrowseWrapped results page](docs/screenshots/wrapped.jpg)
+
+## Screenshots
+
+| Upload | What you explored |
+|---|---|
+| ![Upload page](docs/screenshots/upload.jpg) | ![Topic breakdown and most visited sites](docs/screenshots/explored.jpg) |
+| **Browsing rhythm (day × hour heatmap)** | **Knowledge map** |
+| ![Heatmap](docs/screenshots/rhythm.jpg) | ![Topic graph](docs/screenshots/universe.jpg) |
+
+> Screenshots use the synthetic sample file from the API repo (`sample/sample_history.json`), not real browsing data.
 
 ## Features
 
-### Interactive Analytics
+- **Upload or import:** drop a Chrome Takeout JSON, an extension export (JSON) or a CSV, or let the API read Chrome's local history database (when the API runs on the same machine)
+- **Persona card:** a fun "you are…" summary (The Builder, The AI Pioneer…) based on your top topics
+- **Stats:** total visits, hours browsed, daily average, top interest, streaks
+- **Charts:** topic breakdown, most-visited sites and pages, activity calendar, day × hour heatmap, weekly and monthly patterns
+- **Trends:** which interests are rising or falling, and how your curiosity shifted over time
+- **Knowledge map:** an interactive graph of topic clusters (drag to explore)
 
-* Topic distribution charts
-* Interest growth tracking
-* Learning journey timeline
-* Domain analytics
-* Search behavior insights
+## Tech stack
 
-### Visualizations
+- React 19 + Vite
+- Tailwind CSS 3
+- Recharts for charts, D3 for the force-directed knowledge map
+- Axios for API calls
+- React Router
 
-* Knowledge graphs
-* Topic relationship networks
-* Time-based activity charts
-* Trend analysis dashboards
+## Getting started
 
-### Privacy First
+### 1. Start the API
 
-* Browser history is processed securely
-* Users control uploaded data
-* No unnecessary tracking
+Follow the setup in [browsewrapped-api](https://github.com/MeghaKoshti/browsewrapped-api) and run it on `http://localhost:3000`.
 
-## Tech Stack
-
-* React
-* Vite
-* Tailwind CSS v4
-* Recharts
-* React Flow
-* Axios
-* React Router
-
-## Development
-
-### Prerequisites
-
-* Node.js
-* npm
-
-If using mise:
-
-```bash
-mise install
-mise trust
-```
-
-### Setup
+### 2. Start the frontend
 
 ```bash
 npm install
 npm run dev
 ```
+
+Open http://localhost:5173. The Vite dev server proxies `/api` requests to `http://localhost:3000` (see `vite.config.js`).
+
+### 3. Try it
+
+Upload `sample/sample_history.json` from the API repo, or export your own history:
+
+- **Chrome:** [Google Takeout](https://takeout.google.com) → Chrome → `BrowserHistory.json`
+- **Firefox / others:** use an "Export Browsing History" add-on to get a CSV or JSON file
 
 ### Build
 
@@ -71,23 +61,14 @@ npm run dev
 npm run build
 ```
 
-## API
+## Project status
 
-This application consumes data from the BrowseWrapped API:
-
-https://github.com/MeghaKoshti/browsewrapped-api
-
-## Project Status
-
-🚧 Early Development
-
-Currently building:
-
-* Browser history ingestion
-* Topic analytics
-* Interactive dashboards
-* Knowledge graph visualization
+🚧 Actively in development. Ideas on the list: shareable report cards, year-over-year comparison and more browser import options.
 
 ## Author
 
-Megha Koshti
+**Megha Koshti**, Ruby on Rails developer · [GitHub](https://github.com/MeghaKoshti) · [LinkedIn](https://www.linkedin.com/in/megha-koshti)
+
+## License
+
+[MIT](LICENSE)
