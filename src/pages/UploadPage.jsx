@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { analyzeHistory, analyzeChrome, fetchSampleReport } from '../api/client'
+import { createAnalysis, analyzeChrome, fetchSampleReport } from '../api/client'
 import UrlStream from '../components/ui/UrlStream'
 
 const MAX_BYTES = 100 * 1024 * 1024
@@ -30,15 +30,19 @@ export default function UploadPage() {
     setProgress(0)
     setLoadingMsg('Uploading…')
     try {
-      const data = await analyzeHistory(file, (p) => {
+      const analysis = await createAnalysis(file, (p) => {
         setProgress(p)
         if (p === 100) setLoadingMsg('Analyzing patterns…')
       })
-      onSuccess(data, file.name)
+      // Completed analyses carry their result, so the next page can render it
+      // straight away; pending ones are polled there.
+      navigate(`/analyses/${analysis.id}`, {
+        state: { filename: file.name, data: analysis.status === 'completed' ? analysis.result : null },
+      })
     } catch (err) {
       onError(err.response?.data?.error || err.message || 'Something went wrong')
     }
-  }, [onSuccess, onError])
+  }, [navigate, onError])
 
   const handleChrome = useCallback(async () => {
     setState('loading')
