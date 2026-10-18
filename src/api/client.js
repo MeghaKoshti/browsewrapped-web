@@ -16,6 +16,11 @@ export async function analyzeHistory(file, onProgress) {
   return data
 }
 
+export async function fetchSampleReport() {
+  const { data } = await http.get('/api/v1/sample')
+  return data
+}
+
 export async function analyzeChrome() {
   const { data } = await http.get('/api/v1/chrome')
   return data
