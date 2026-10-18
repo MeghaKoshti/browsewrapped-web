@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { analyzeHistory, analyzeChrome } from '../api/client'
+import { createAnalysis, analyzeChrome, fetchSampleReport } from '../api/client'
 import UrlStream from '../components/ui/UrlStream'
 
 const MAX_BYTES = 100 * 1024 * 1024
@@ -30,15 +30,19 @@ export default function UploadPage() {
     setProgress(0)
     setLoadingMsg('Uploading…')
     try {
-      const data = await analyzeHistory(file, (p) => {
+      const analysis = await createAnalysis(file, (p) => {
         setProgress(p)
         if (p === 100) setLoadingMsg('Analyzing patterns…')
       })
-      onSuccess(data, file.name)
+      // Completed analyses carry their result, so the next page can render it
+      // straight away; pending ones are polled there.
+      navigate(`/analyses/${analysis.id}`, {
+        state: { filename: file.name, data: analysis.status === 'completed' ? analysis.result : null },
+      })
     } catch (err) {
       onError(err.response?.data?.error || err.message || 'Something went wrong')
     }
-  }, [onSuccess, onError])
+  }, [navigate, onError])
 
   const handleChrome = useCallback(async () => {
     setState('loading')
@@ -49,6 +53,18 @@ export default function UploadPage() {
       onSuccess(data, 'Chrome History')
     } catch (err) {
       onError(err.response?.data?.error || err.message || 'Could not read Chrome history')
+    }
+  }, [onSuccess, onError])
+
+  const handleSample = useCallback(async () => {
+    setState('loading')
+    setProgress(0)
+    setLoadingMsg('Loading sample report…')
+    try {
+      const data = await fetchSampleReport()
+      onSuccess(data, 'Sample data')
+    } catch (err) {
+      onError(err.response?.data?.error || err.message || 'Could not load the sample report')
     }
   }, [onSuccess, onError])
 
@@ -133,6 +149,34 @@ export default function UploadPage() {
           </div>
         ) : (
           <>
+            {/* ── Sample data CTA: works for every visitor, no export needed ── */}
+            <button
+              type="button"
+              onClick={handleSample}
+              className="w-full"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 10,
+                padding: '16px 24px',
+                marginBottom: 14,
+                borderRadius: 18,
+                border: 'none',
+                background: 'linear-gradient(90deg, #a855f7, #f472b6)',
+                color: 'white',
+                cursor: 'pointer',
+                fontFamily: 'var(--font-display)',
+                fontSize: 17,
+                fontWeight: 700,
+                boxShadow: '0 8px 30px rgba(168,85,247,0.35)',
+              }}
+            >
+              <span aria-hidden="true">✨</span>
+              Try with sample data
+              <span style={{ fontSize: 12, fontWeight: 500, opacity: 0.85 }}>· no upload needed</span>
+            </button>
+
             {/* ── Chrome primary CTA ── */}
             <button
               type="button"
