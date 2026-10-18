@@ -37,6 +37,23 @@ export async function getAnalysis(id, { signal } = {}) {
   return data
 }
 
+// Creates a public share link. Pass analysisId for stored analyses, or the
+// report itself (sample data, Chrome import). The API strips private fields.
+export async function createShareLink({ analysisId, report }) {
+  const body = analysisId ? { analysis_id: analysisId } : { report }
+  const { data } = await http.post('/api/v1/shared_reports', body)
+  return data
+}
+
+export async function getSharedReport(token, { signal } = {}) {
+  const { data } = await http.get(`/api/v1/shared_reports/${token}`, { signal })
+  return data
+}
+
+export async function deleteShareLink(token, deleteToken) {
+  await http.delete(`/api/v1/shared_reports/${token}`, { headers: { 'X-Delete-Token': deleteToken } })
+}
+
 export async function fetchSampleReport() {
   const { data } = await http.get('/api/v1/sample')
   return data

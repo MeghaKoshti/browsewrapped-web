@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import ReportView from '../components/report/ReportView'
+import ShareButton from '../components/report/ShareButton'
 
 // Shows a report passed in router state (sample data, Chrome import).
 export default function ResultsPage() {
@@ -15,5 +16,5 @@ export default function ResultsPage() {
 
   if (!data) return null
 
-  return <ReportView data={data} filename={filename} />
+  return <ReportView data={data} filename={filename} actions={<ShareButton report={data} />} />
 }

@@ -36,7 +36,11 @@ function Section({ children, className = '' }) {
 
 // The full Wrapped report. Used by the results page, the analysis (polling)
 // page and, later, shared report links.
-export default function ReportView({ data, filename }) {
+// Props:
+//   banner  – optional element shown under the header (e.g. "shared report" note)
+//   actions – optional element shown in the hero (e.g. the Share button)
+//   shared  – true on public /r/:token pages (read-only wording)
+export default function ReportView({ data, filename, banner = null, actions = null, shared = false }) {
   const {
     summary, persona, topics, time_by_topic, daily_pattern, weekly_pattern,
     monthly_trends, heatmap, activity_calendar, sessions, streaks, topic_momentum,
@@ -55,6 +59,7 @@ export default function ReportView({ data, filename }) {
   const hasWeekly       = weekly_pattern?.some((d) => d.visits > 0)
   const hasIntent       = intent && (intent.typed_pct > 0 || intent.link_pct > 0)
   const hasPages        = top_pages?.length > 0
+  const hasDomains      = top_domains?.length > 0
   const hasSessions     = sessions?.total_sessions > 0
   const hasMomentum     = topic_momentum?.rising?.length > 0 || topic_momentum?.falling?.length > 0
   const activeSearches  = chrome_searches?.length > 0 ? chrome_searches : top_searches
@@ -80,14 +85,14 @@ export default function ReportView({ data, filename }) {
             onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text)'}
             onMouseLeave={(e) => e.currentTarget.style.color = 'var(--muted)'}
           >
-            ← Back
+            {shared ? 'Make your own →' : '← Back'}
           </Link>
           <span className="mono" style={{ fontSize: 10, letterSpacing: '0.3em', color: 'var(--muted)', textTransform: 'uppercase' }}>
             BrowseWrapped
           </span>
           <span className="mono" style={{ fontSize: 11, color: 'var(--muted)' }}>
             {meta?.total_entries_parsed?.toLocaleString()} entries
-            {meta?.source === 'chrome_direct' ? ' · Chrome' : meta?.source === 'sample' ? ' · sample' : ' · upload'}
+            {shared ? ' · shared' : meta?.source === 'chrome_direct' ? ' · Chrome' : meta?.source === 'sample' ? ' · sample' : ' · upload'}
           </span>
         </div>
       </header>
@@ -103,11 +108,13 @@ export default function ReportView({ data, filename }) {
         </div>
       )}
 
+      {banner}
+
       {/* ── Hero ── */}
       <div style={{ position: 'relative', overflow: 'hidden', borderBottom: '1px solid var(--border)' }}>
         <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse 60% 100% at 50% 0%, rgba(168,85,247,0.12), transparent)', pointerEvents: 'none' }} />
         <div style={{ maxWidth: 980, margin: '0 auto', padding: '48px 20px 40px', textAlign: 'center', position: 'relative' }}>
-          <p className="section-label" style={{ marginBottom: 12 }}>Your Digital Footprint</p>
+          <p className="section-label" style={{ marginBottom: 12 }}>{shared ? 'A Shared Digital Footprint' : 'Your Digital Footprint'}</p>
           <h1
             className="display gradient-text"
             style={{ fontSize: 'clamp(2.5rem, 8vw, 4.5rem)', fontWeight: 700, letterSpacing: '-0.03em', lineHeight: 1, margin: 0 }}
@@ -122,6 +129,7 @@ export default function ReportView({ data, filename }) {
               {summary.date_range.start} → {summary.date_range.end}
             </p>
           )}
+          {actions && <div style={{ marginTop: 20 }}>{actions}</div>}
         </div>
         {hasTimestamps && (
           <div style={{ maxWidth: 980, margin: '0 auto' }}>
@@ -179,15 +187,17 @@ export default function ReportView({ data, filename }) {
         )}
 
         {/* ─ Topics + Domains ─ */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: hasDomains ? '1fr 1fr' : '1fr', gap: 20 }}>
           <Section>
             <SectionHeader label="Breakdown" title="What You Explored" />
             <TopicsDonut topics={topics} />
           </Section>
-          <Section>
-            <SectionHeader label="Top Sites" title="Your Most Visited" />
-            <TopDomains domains={top_domains} />
-          </Section>
+          {hasDomains && (
+            <Section>
+              <SectionHeader label="Top Sites" title="Your Most Visited" />
+              <TopDomains domains={top_domains} />
+            </Section>
+          )}
         </div>
 
         {/* ─ Activity calendar ─ */}
@@ -318,7 +328,11 @@ export default function ReportView({ data, filename }) {
         )}
 
         <p className="mono" style={{ textAlign: 'center', fontSize: 10, color: 'rgba(82,82,110,0.5)', paddingTop: 8, letterSpacing: '0.06em' }}>
-          All analysis runs locally — your data never leaves your machine.
+          {shared
+            ? 'Shared reports contain aggregated stats only — no URLs, page titles, searches or site names.'
+            : meta?.analysis_id
+              ? 'Your upload is analysed on the BrowseWrapped server and deleted after 7 days. Share links only include aggregated stats.'
+              : 'Share links only include aggregated stats — no URLs, page titles, searches or site names.'}
         </p>
       </main>
     </div>
