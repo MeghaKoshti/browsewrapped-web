@@ -4,7 +4,7 @@
 
 **BrowseWrapped turns your browser history into a "Spotify Wrapped"-style report**: what you explored, when you browse, which topics are growing, and a knowledge map of your interests.
 
-This repo is the **React frontend**. The analysis happens in the Rails API: [browsewrapped-api](https://github.com/MeghaKoshti/browsewrapped-api).
+This repo is the **React frontend**. The analysis happens in the Rails API: [browsewrapped-api](https://github.com/MeghaKoshti/browsewrapped-api). For how the pieces fit together and why, see [Architecture & decisions](https://github.com/MeghaKoshti/browsewrapped-api#architecture--decisions).
 
 ![BrowseWrapped results page](docs/screenshots/wrapped.jpg)
 
@@ -20,12 +20,15 @@ This repo is the **React frontend**. The analysis happens in the Rails API: [bro
 
 ## Features
 
+- **Try with sample data:** one click shows a full report from a synthetic history, no export needed
 - **Upload or import:** drop a Chrome Takeout JSON, an extension export (JSON) or a CSV, or let the API read Chrome's local history database (when the API runs on the same machine)
 - **Persona card:** a fun "you are…" summary (The Builder, The AI Pioneer…) based on your top topics
 - **Stats:** total visits, hours browsed, daily average, top interest, streaks
 - **Charts:** topic breakdown, most-visited sites and pages, activity calendar, day × hour heatmap, weekly and monthly patterns
 - **Trends:** which interests are rising or falling, and how your curiosity shifted over time
 - **Knowledge map:** an interactive graph of topic clusters (drag to explore)
+- **Large files:** big uploads are analysed in the background; `/analyses/:id` shows a processing screen and polls until the report is ready
+- **Share links:** "Share my report" creates a public `/r/:token` page with aggregated stats only (no URLs, titles, searches or site names), which you can delete at any time
 
 ## Tech stack
 
@@ -65,7 +68,7 @@ npm run build
 
 ## Project status
 
-🚧 Actively in development. Ideas on the list: shareable report cards, year-over-year comparison and more browser import options.
+🚧 Actively in development. Ideas on the list: year-over-year comparison and more browser import options.
 
 ## Author
 
