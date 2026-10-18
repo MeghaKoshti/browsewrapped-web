@@ -97,10 +97,21 @@ export default function ResultsPage() {
           </span>
           <span className="mono" style={{ fontSize: 11, color: 'var(--muted)' }}>
             {meta?.total_entries_parsed?.toLocaleString()} entries
-            {meta?.source === 'chrome_direct' ? ' · Chrome' : ' · upload'}
+            {meta?.source === 'chrome_direct' ? ' · Chrome' : meta?.source === 'sample' ? ' · sample' : ' · upload'}
           </span>
         </div>
       </header>
+
+      {/* ── Sample data banner ── */}
+      {meta?.source === 'sample' && (
+        <div
+          role="note"
+          style={{ background: 'rgba(168,85,247,0.1)', borderBottom: '1px solid rgba(168,85,247,0.25)', padding: '10px 20px', textAlign: 'center', fontSize: 13, color: 'var(--text)' }}
+        >
+          You&apos;re viewing <strong>synthetic sample data</strong>.{' '}
+          <Link to="/" style={{ color: 'var(--accent)' }}>Upload your own history</Link> to see your real Wrapped.
+        </div>
+      )}
 
       {/* ── Hero ── */}
       <div style={{ position: 'relative', overflow: 'hidden', borderBottom: '1px solid var(--border)' }}>
