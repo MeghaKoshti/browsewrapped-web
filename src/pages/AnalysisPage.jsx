@@ -3,6 +3,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import axios from 'axios'
 import { getAnalysis } from '../api/client'
 import ReportView from '../components/report/ReportView'
+import ShareButton from '../components/report/ShareButton'
 import StatusScreen, { Spinner } from '../components/report/StatusScreen'
 
 const POLL_INTERVAL_MS = 2000
@@ -69,7 +70,7 @@ export default function AnalysisPage() {
   const filename = state?.filename || analysis.filename
 
   if (analysis.status === 'completed' && analysis.result) {
-    return <ReportView data={analysis.result} filename={filename} />
+    return <ReportView data={analysis.result} filename={filename} actions={<ShareButton analysisId={id} />} />
   }
 
   if (analysis.status === 'failed' || loadError) {
