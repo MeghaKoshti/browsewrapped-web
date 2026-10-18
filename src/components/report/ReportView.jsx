@@ -129,6 +129,11 @@ export default function ReportView({ data, filename, banner = null, actions = nu
               {summary.date_range.start} → {summary.date_range.end}
             </p>
           )}
+          {meta?.ai_classified_domains > 0 && (
+            <p className="mono" style={{ marginTop: 8, fontSize: 11, color: 'var(--accent)' }}>
+              ✨ {meta.ai_classified_domains} {meta.ai_classified_domains === 1 ? 'site' : 'sites'} categorised by AI
+            </p>
+          )}
           {actions && <div style={{ marginTop: 20 }}>{actions}</div>}
         </div>
         {hasTimestamps && (
