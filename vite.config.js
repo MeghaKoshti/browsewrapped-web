@@ -3,6 +3,23 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
+  build: {
+    rolldownOptions: {
+      output: {
+        // Vendor libraries change less often than app code, so their chunks
+        // stay cached between deploys. React gets the top priority so the
+        // chart groups (which also pull in their dependencies) can't absorb
+        // it and drag Recharts onto the upload page.
+        codeSplitting: {
+          groups: [
+            { name: 'react', test: /node_modules[\\/](react|react-dom|scheduler)[\\/]/, priority: 3 },
+            { name: 'recharts', test: /node_modules[\\/]recharts[\\/]/, priority: 2 },
+            { name: 'd3', test: /node_modules[\\/]d3[\\/]/, priority: 1 },
+          ],
+        },
+      },
+    },
+  },
   server: {
     proxy: {
       '/api': {

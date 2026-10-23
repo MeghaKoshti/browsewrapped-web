@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react'
 import { Link } from 'react-router-dom'
 import StatCard from '../ui/StatCard'
 import SectionHeader from '../ui/SectionHeader'
@@ -16,9 +17,12 @@ import TopicMomentum from '../charts/TopicMomentum'
 import TopDomains from '../domain/TopDomains'
 import TopPages from '../domain/TopPages'
 import SearchCloud from '../search/SearchCloud'
-import KnowledgeMap from '../graph/KnowledgeMap'
 import PeriodComparison from './PeriodComparison'
 import useDocumentTitle from '../../hooks/useDocumentTitle'
+import { KnowledgeMapSkeleton } from '../ui/Skeleton'
+
+// D3 is only needed for the knowledge map, at the very end of the report.
+const KnowledgeMap = lazy(() => import('../graph/KnowledgeMap'))
 
 function fmt(n) {
   if (n == null) return '—'
@@ -335,7 +339,9 @@ export default function ReportView({ data, filename, banner = null, actions = nu
                 description={`${knowledge_graph.nodes.length} topic clusters · drag to explore · node size = visit count`}
               />
             </div>
-            <KnowledgeMap nodes={knowledge_graph.nodes} edges={knowledge_graph.edges} />
+            <Suspense fallback={<KnowledgeMapSkeleton />}>
+              <KnowledgeMap nodes={knowledge_graph.nodes} edges={knowledge_graph.edges} />
+            </Suspense>
           </section>
         )}
 
