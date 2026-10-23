@@ -1,3 +1,4 @@
+import { StrictMode } from 'react'
 import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -6,13 +7,15 @@ import SkipLink from './SkipLink'
 
 function renderApp() {
   return render(
-    <MemoryRouter initialEntries={['/']}>
-      <SkipLink />
-      <Routes>
-        <Route path="/" element={<main id="main" tabIndex={-1}><Link to="/next">Next page</Link></main>} />
-        <Route path="/next" element={<main id="main" tabIndex={-1}><h1>Next</h1></main>} />
-      </Routes>
-    </MemoryRouter>,
+    <StrictMode>
+      <MemoryRouter initialEntries={['/']}>
+        <SkipLink />
+        <Routes>
+          <Route path="/" element={<main id="main" tabIndex={-1}><Link to="/next">Next page</Link></main>} />
+          <Route path="/next" element={<main id="main" tabIndex={-1}><h1>Next</h1></main>} />
+        </Routes>
+      </MemoryRouter>
+    </StrictMode>,
   )
 }
 
@@ -26,6 +29,15 @@ describe('SkipLink', () => {
 
     await userEvent.keyboard('{Enter}')
     expect(screen.getByRole('main')).toHaveFocus()
+  })
+
+  // StrictMode (on in main.jsx) runs effects twice on mount; the first page
+  // load must still leave focus alone so Tab lands on the skip link.
+  it('does not take focus on the first page load', () => {
+    renderApp()
+
+    expect(screen.getByRole('link', { name: 'Skip to content' })).not.toHaveFocus()
+    expect(document.body).toHaveFocus()
   })
 
   it('takes focus after navigating so the new page starts at the top', async () => {

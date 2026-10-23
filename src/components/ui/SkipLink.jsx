@@ -11,13 +11,13 @@ import { useLocation } from 'react-router-dom'
 export default function SkipLink() {
   const ref = useRef(null)
   const { pathname } = useLocation()
-  const firstRender = useRef(true)
+  // Compare paths rather than using a "first render" flag: StrictMode runs
+  // effects twice on mount, which made the flag focus the link on page load.
+  const lastPathname = useRef(pathname)
 
   useEffect(() => {
-    if (firstRender.current) {
-      firstRender.current = false
-      return
-    }
+    if (lastPathname.current === pathname) return
+    lastPathname.current = pathname
     ref.current?.focus({ preventScroll: true })
   }, [pathname])
 
