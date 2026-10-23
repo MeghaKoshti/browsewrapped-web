@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { createAnalysis, analyzeChrome, fetchSampleReport } from '../api/client'
+import { createAnalysis, analyzeChrome, fetchSampleReport, canImportLocalChrome } from '../api/client'
 import { errorMessage } from '../api/errorMessage'
 import UrlStream from '../components/ui/UrlStream'
 import ExportGuide from '../components/upload/ExportGuide'
@@ -191,34 +191,36 @@ export default function UploadPage() {
               <span style={{ fontSize: 12, fontWeight: 500, whiteSpace: 'nowrap' }}>No upload needed</span>
             </button>
 
-            {/* ── Chrome primary CTA ── */}
-            <button
-              type="button"
-              onClick={handleChrome}
-              className="chrome-btn w-full text-left"
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 16,
-                padding: '20px 24px',
-                borderRadius: 18,
-                border: '1px solid rgba(168,85,247,0.4)',
-                background: 'var(--surface)',
-                cursor: 'pointer',
-                color: 'var(--text)',
-              }}
-            >
-              <span style={{ fontSize: 32, flexShrink: 0, lineHeight: 1 }} aria-hidden="true">🌐</span>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <p style={{ fontFamily: 'var(--font-display)', fontSize: 18, fontWeight: 700, color: 'white', lineHeight: 1.2, margin: 0 }}>
-                  Import from Chrome
-                </p>
-                <p style={{ fontSize: 13, color: 'var(--muted)', marginTop: 4 }}>
-                  Reads your local Chrome database — instant, no export needed
-                </p>
-              </div>
-              <span style={{ color: 'var(--accent)', fontSize: 22, flexShrink: 0, fontWeight: 300 }} aria-hidden="true">→</span>
-            </button>
+            {/* ── Chrome primary CTA (only when the API runs on this computer) ── */}
+            {canImportLocalChrome && (
+              <button
+                type="button"
+                onClick={handleChrome}
+                className="chrome-btn w-full text-left"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 16,
+                  padding: '20px 24px',
+                  borderRadius: 18,
+                  border: '1px solid rgba(168,85,247,0.4)',
+                  background: 'var(--surface)',
+                  cursor: 'pointer',
+                  color: 'var(--text)',
+                }}
+              >
+                <span style={{ fontSize: 32, flexShrink: 0, lineHeight: 1 }} aria-hidden="true">🌐</span>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <p style={{ fontFamily: 'var(--font-display)', fontSize: 18, fontWeight: 700, color: 'white', lineHeight: 1.2, margin: 0 }}>
+                    Import from Chrome
+                  </p>
+                  <p style={{ fontSize: 13, color: 'var(--muted)', marginTop: 4 }}>
+                    Reads your local Chrome database — instant, no export needed
+                  </p>
+                </div>
+                <span style={{ color: 'var(--accent)', fontSize: 22, flexShrink: 0, fontWeight: 300 }} aria-hidden="true">→</span>
+              </button>
+            )}
 
             {/* Divider */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '20px 0' }}>

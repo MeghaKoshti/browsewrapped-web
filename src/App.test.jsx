@@ -10,6 +10,7 @@ vi.mock('./api/client', () => ({
   fetchSampleReport: vi.fn(),
   createAnalysis: vi.fn(),
   analyzeChrome: vi.fn(),
+  canImportLocalChrome: true,
 }))
 
 // Lazy chunks are transformed on first import, which can take a few

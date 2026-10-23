@@ -6,10 +6,12 @@ import UploadPage from './UploadPage'
 import { fetchSampleReport, createAnalysis } from '../api/client'
 import report from '../test/fixtures/report.json'
 
+const api = vi.hoisted(() => ({ localChrome: true }))
 vi.mock('../api/client', () => ({
   fetchSampleReport: vi.fn(),
   createAnalysis: vi.fn(),
   analyzeChrome: vi.fn(),
+  get canImportLocalChrome() { return api.localChrome },
 }))
 
 // Stands in for the results page so we can see what UploadPage navigated with.
@@ -30,7 +32,21 @@ function renderUpload() {
 }
 
 describe('UploadPage', () => {
-  beforeEach(() => { vi.mocked(fetchSampleReport).mockReset() })
+  beforeEach(() => {
+    vi.mocked(fetchSampleReport).mockReset()
+    api.localChrome = true
+  })
+
+  it('offers "Import from Chrome" only when the API runs on this computer', () => {
+    const { unmount } = renderUpload()
+    expect(screen.getByRole('button', { name: /import from chrome/i })).toBeInTheDocument()
+    unmount()
+
+    api.localChrome = false
+    renderUpload()
+    expect(screen.queryByRole('button', { name: /import from chrome/i })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /try with sample data/i })).toBeInTheDocument()
+  })
 
   it('loads the sample report through the API client and opens the results page', async () => {
     vi.mocked(fetchSampleReport).mockResolvedValue(report)

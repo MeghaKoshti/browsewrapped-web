@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from 'vitest'
-import { apiBaseUrl } from './client'
+import { apiBaseUrl, isLocalApi } from './client'
 
 describe('apiBaseUrl', () => {
   it('uses the /api dev proxy when VITE_API_URL is not set', () => {
@@ -13,6 +13,22 @@ describe('apiBaseUrl', () => {
     expect(apiBaseUrl('https://browsewrapped-api.fly.dev/')).toBe('https://browsewrapped-api.fly.dev/api')
     expect(apiBaseUrl('https://browsewrapped-api.fly.dev/api')).toBe('https://browsewrapped-api.fly.dev/api')
     expect(apiBaseUrl('https://browsewrapped-api.fly.dev/api/')).toBe('https://browsewrapped-api.fly.dev/api')
+  })
+})
+
+describe('isLocalApi', () => {
+  it('is true for the dev proxy and an API on this computer', () => {
+    expect(isLocalApi(undefined)).toBe(true)
+    expect(isLocalApi('')).toBe(true)
+    expect(isLocalApi('http://localhost:3000')).toBe(true)
+    expect(isLocalApi('http://127.0.0.1:3000/api')).toBe(true)
+    expect(isLocalApi('http://[::1]:3000')).toBe(true)
+  })
+
+  it('is false for a hosted API', () => {
+    expect(isLocalApi('https://browsewrapped-api.fly.dev')).toBe(false)
+    expect(isLocalApi('https://localhost.example.com')).toBe(false)
+    expect(isLocalApi('not a url')).toBe(false)
   })
 })
 

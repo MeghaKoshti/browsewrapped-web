@@ -12,6 +12,21 @@ export function apiBaseUrl(url) {
 
 const http = axios.create({ baseURL: apiBaseUrl(import.meta.env.VITE_API_URL) })
 
+// "Import from Chrome" makes the API read Chrome's database on the machine the
+// API runs on. That is only the visitor's own Chrome when the API is local
+// (the dev proxy or localhost), never on a hosted API such as Fly.io.
+export function isLocalApi(url) {
+  const base = String(url || '').trim()
+  if (!base) return true
+  try {
+    return ['localhost', '127.0.0.1', '[::1]'].includes(new URL(base).hostname)
+  } catch {
+    return false
+  }
+}
+
+export const canImportLocalChrome = isLocalApi(import.meta.env.VITE_API_URL)
+
 export async function analyzeHistory(file, onProgress) {
   const form = new FormData()
   form.append('file', file)

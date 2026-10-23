@@ -105,6 +105,8 @@ What `vercel.json` sets up:
 - **Security headers:** a Content Security Policy (only this site's scripts and styles, Google Fonts, the API in `connect-src`, `data:`/`blob:` images for the PNG export, no framing), `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin` and a `Permissions-Policy` that turns off camera, microphone and location.
 - **Caching:** hashed files in `/assets/` are cached for a year.
 
+"Import from Chrome" reads Chrome's database on the machine the API runs on, so the upload page only shows it when `VITE_API_URL` is empty or points at `localhost`. Visitors to the hosted site upload their history file instead.
+
 The CSP needs no `'unsafe-inline'`: styles live in `src/index.css`, and React and D3 set inline styles through the DOM, which CSP allows. Keep new `<style>` tags out of components.
 
 To check a production build locally:
