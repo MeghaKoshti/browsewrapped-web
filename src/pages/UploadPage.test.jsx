@@ -82,4 +82,37 @@ describe('UploadPage', () => {
     expect(scrollIntoView.mock.contexts[0]).toBe(alert)
     delete window.HTMLElement.prototype.scrollIntoView
   })
+
+  it('lets any file through the picker, so Chrome’s extensionless "History" file can be chosen', async () => {
+    vi.mocked(createAnalysis).mockResolvedValue({ id: '7', status: 'pending' })
+    const { container } = renderUpload()
+    const input = container.querySelector('input[type="file"]')
+    expect(input).not.toHaveAttribute('accept')
+
+    const history = new File(['SQLite format 3\0'], 'History', { type: '' })
+    await userEvent.upload(input, history)
+
+    expect(createAnalysis).toHaveBeenCalledWith(history, expect.any(Function))
+  })
+
+  it('explains an SQLite file that isn’t browser history', async () => {
+    vi.mocked(createAnalysis).mockRejectedValue({
+      response: { status: 415, data: { error: { code: 'unsupported_sqlite', message: 'Unsupported SQLite database' } } },
+    })
+    const { container } = renderUpload()
+
+    await userEvent.upload(container.querySelector('input[type="file"]'), new File(['x'], 'notes.db'))
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('That database isn’t a browser history file.')
+  })
+
+  it('opens the export guide on the visitor’s browser', () => {
+    vi.spyOn(navigator, 'userAgent', 'get').mockReturnValue(
+      'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:144.0) Gecko/20100101 Firefox/144.0',
+    )
+    renderUpload()
+
+    expect(screen.getByRole('tab', { selected: true })).toHaveTextContent('Firefox')
+    expect(screen.getAllByRole('button', { name: /^Copy .* path$/ })[0]).toHaveAccessibleName('Copy Linux path')
+  })
 })

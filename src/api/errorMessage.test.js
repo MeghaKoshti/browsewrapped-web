@@ -71,4 +71,12 @@ describe('formatWait', () => {
     expect(errorMessage(apiError(415, { error: { code: 'unsupported_media_type', message: 'Unsupported' } }))).toMatch(/JSON or CSV/)
     expect(errorMessage(apiError(415, { error: 'Unsupported Media Type' }))).toMatch(/JSON or CSV/)
   })
+
+  it('explains SQLite uploads that are not browser history or are damaged', () => {
+    const notHistory = apiError(415, { error: { code: 'unsupported_sqlite', message: 'Unsupported SQLite database' } })
+    expect(errorMessage(notHistory)).toMatch(/isn’t a browser history file.*places\.sqlite.*History\.db/)
+
+    const corrupt = apiError(422, { error: { code: 'corrupt_sqlite', message: 'Database disk image is malformed' } })
+    expect(errorMessage(corrupt)).toMatch(/looks incomplete.*Quit the browser, copy the file again/)
+  })
 })

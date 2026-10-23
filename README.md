@@ -25,7 +25,8 @@ This repo is the **React frontend**. The analysis happens in the Rails API: [bro
 ## Features
 
 - **Try with sample data:** one click shows a full report from a synthetic history, no export needed
-- **Upload or import:** drop a Chrome Takeout JSON, an extension export (JSON) or a CSV, or let the API read Chrome's local history database (when the API runs on the same machine)
+- **Upload or import:** drop a Chrome Takeout JSON, an extension export (JSON or CSV), or the browser's own history database: Chrome/Edge `History`, Firefox `places.sqlite` or Safari `History.db`. The API can also read Chrome's local database directly when it runs on the same machine
+- **Export guide:** step-by-step tabs for Chrome, Firefox, Safari, Edge and other browsers, with file locations on macOS, Windows and Linux and a one-click copy for each path. It opens on the visitor's own browser
 - **Persona card:** a fun "you are…" summary (The Builder, The AI Pioneer…) based on your top topics
 - **Download image:** save your persona card as a 1080×1350 PNG (persona, top topics, key stats), made in your browser
 - **Stats:** total visits, hours browsed, daily average, top interest, streaks
@@ -64,10 +65,14 @@ Open http://localhost:5173. The Vite dev server proxies `/api` requests to `http
 
 ### 3. Try it
 
-Upload `sample/sample_history.json` from the API repo, or export your own history:
+Upload `sample/sample_history.json` from the API repo, or your own history. The upload page has a guide for every browser; in short:
 
-- **Chrome:** [Google Takeout](https://takeout.google.com) → Chrome → `BrowserHistory.json`
-- **Firefox / others:** use an "Export Browsing History" add-on to get a CSV or JSON file
+- **Chrome / Edge:** the `History` file in your profile folder (no extension), or a [Google Takeout](https://takeout.google.com) export
+- **Firefox:** `places.sqlite` in your profile folder (open `about:support` → Profile Folder)
+- **Safari:** `~/Library/Safari/History.db`
+- **Any browser:** a CSV or JSON file from a history-export extension
+
+Browsers keep their history database busy while they're open, so quit the browser or upload a copy of the file.
 
 ### Test
 

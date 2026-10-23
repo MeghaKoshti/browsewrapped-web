@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import { createAnalysis, analyzeChrome, fetchSampleReport } from '../api/client'
 import { errorMessage } from '../api/errorMessage'
 import UrlStream from '../components/ui/UrlStream'
+import ExportGuide from '../components/upload/ExportGuide'
+import { detectBrowser, detectOS } from '../lib/exportGuide'
 import useDocumentTitle from '../hooks/useDocumentTitle'
 
 const MAX_BYTES = 100 * 1024 * 1024
@@ -17,6 +19,7 @@ export default function UploadPage() {
   const errorRef = useRef(null)
   const navigate = useNavigate()
   useDocumentTitle('Your year in tabs')
+  const [guide] = useState(() => ({ browser: detectBrowser(navigator.userAgent), os: detectOS(navigator.userAgent) }))
 
   // The error box renders under the drop zone, below the fold on most
   // laptops and phones, so bring it into view or the upload looks ignored.
@@ -238,10 +241,10 @@ export default function UploadPage() {
               <span style={{ fontSize: 26 }} aria-hidden="true">📂</span>
               <div>
                 <p style={{ fontFamily: 'var(--font-display)', fontWeight: 600, color: 'var(--text)', margin: 0 }}>
-                  {dragging ? 'Drop it here' : 'Drop your export file'}
+                  {dragging ? 'Drop it here' : 'Drop your history file'}
                 </p>
                 <p id="drop-zone-formats" className="mono" style={{ fontSize: 11, color: 'var(--muted)', marginTop: 4, letterSpacing: '0.06em' }}>
-                  JSON · CSV
+                  JSON · CSV · SQLite
                 </p>
               </div>
               <button
@@ -265,24 +268,15 @@ export default function UploadPage() {
               >
                 Choose file
               </button>
+              {/* No accept filter on purpose: Chrome and Edge name their database
+                  plain "History", and an extension filter would grey it out in
+                  the file picker. The API checks the file's contents instead. */}
               <input
-                ref={inputRef} type="file" accept=".json,.csv" className="hidden" aria-label="Browser history file (JSON or CSV)"
+                ref={inputRef} type="file" className="hidden" aria-label="Browser history file (JSON, CSV or SQLite database)"
                 onChange={(e) => handleFile(e.target.files[0])}
               />
             </div>
 
-            {/* Format hints */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginTop: 12 }}>
-              {[
-                { title: 'Chrome Takeout', body: 'takeout.google.com → Chrome → export BrowserHistory.json' },
-                { title: 'Firefox / other', body: 'Install an "Export Browsing History" add-on for a CSV or JSON file' },
-              ].map((h) => (
-                <div key={h.title} style={{ padding: '12px 14px', borderRadius: 12, border: '1px solid var(--border)', background: 'var(--surface)' }}>
-                  <p style={{ fontSize: 12, fontFamily: 'var(--font-display)', fontWeight: 600, color: 'var(--text)', margin: '0 0 4px' }}>{h.title}</p>
-                  <p style={{ fontSize: 11, color: 'var(--muted)', margin: 0, lineHeight: 1.5 }}>{h.body}</p>
-                </div>
-              ))}
-            </div>
           </>
         )}
 
@@ -302,6 +296,9 @@ export default function UploadPage() {
             </button>
           </div>
         )}
+
+        {/* After the error, so an upload problem shows right under the drop zone. */}
+        {!isLoading && <ExportGuide initialBrowser={guide.browser} os={guide.os} />}
       </main>
 
       <style>{`
