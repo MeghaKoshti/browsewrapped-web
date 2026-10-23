@@ -300,10 +300,6 @@ export default function UploadPage() {
         {/* After the error, so an upload problem shows right under the drop zone. */}
         {!isLoading && <ExportGuide initialBrowser={guide.browser} os={guide.os} />}
       </main>
-
-      <style>{`
-        @keyframes rotate { to { transform: rotate(360deg); } }
-      `}</style>
     </div>
   )
 }

@@ -32,11 +32,6 @@ export function Spinner() {
           <stop offset="100%" stopColor="#f472b6" />
         </linearGradient>
       </defs>
-      <style>{`
-        .status-spinner { animation: status-spin 1.2s linear infinite; }
-        @keyframes status-spin { to { transform: rotate(360deg); } }
-        @media (prefers-reduced-motion: reduce) { .status-spinner { animation-duration: 4s; } }
-      `}</style>
     </svg>
   )
 }

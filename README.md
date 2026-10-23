@@ -46,6 +46,7 @@ This repo is the **React frontend**. The analysis happens in the Rails API: [bro
 - Tailwind CSS 3
 - Recharts for charts, D3 for the force-directed knowledge map
 - Axios for API calls
+- Vercel for hosting (SPA rewrites and security headers in `vercel.json`)
 - React Router
 
 ## Getting started
@@ -88,6 +89,32 @@ Tests run in jsdom with the API client mocked, so no API server is needed. CI ru
 ```bash
 npm run build
 ```
+
+## Deploy
+
+The frontend is a static site, set up for [Vercel](https://vercel.com). The API deploys separately (see [browsewrapped-api](https://github.com/MeghaKoshti/browsewrapped-api#deploy-flyio)).
+
+1. **Import the repo in Vercel.** It detects Vite: build command `npm run build`, output directory `dist`.
+2. **Set `VITE_API_URL`** under Project → Settings → Environment Variables, for example `https://browsewrapped-api-<you>.fly.dev`. It is read at build time, so redeploy after changing it. Without it the app calls `/api` on its own origin, which only works with the Vite dev proxy. See `.env.example`.
+3. **Put the API origin in the CSP.** In `vercel.json`, replace `https://browsewrapped-api-CHANGE-ME.fly.dev` in `connect-src` with your API's origin (scheme and host only, no path). Until you do, the browser blocks every API call.
+4. **Allow the web app on the API.** Set `CORS_ORIGINS=https://<your-app>.vercel.app` on the API. It already exposes `Retry-After`, so rate-limit messages show the real wait.
+
+What `vercel.json` sets up:
+
+- **Deep links:** every path except `/api/*` falls back to `index.html`, so `/r/:token` and `/analyses/:id` links open directly.
+- **Security headers:** a Content Security Policy (only this site's scripts and styles, Google Fonts, the API in `connect-src`, `data:`/`blob:` images for the PNG export, no framing), `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin` and a `Permissions-Policy` that turns off camera, microphone and location.
+- **Caching:** hashed files in `/assets/` are cached for a year.
+
+The CSP needs no `'unsafe-inline'`: styles live in `src/index.css`, and React and D3 set inline styles through the DOM, which CSP allows. Keep new `<style>` tags out of components.
+
+To check a production build locally:
+
+```bash
+VITE_API_URL=https://browsewrapped-api-<you>.fly.dev npm run build
+npx vite preview   # http://localhost:4173
+```
+
+The report pages, Recharts and D3 are split into separate chunks that load on demand, so the upload page only downloads about 300 kB of JavaScript (about 100 kB gzipped).
 
 ## Project status
 
