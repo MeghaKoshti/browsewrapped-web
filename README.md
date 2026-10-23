@@ -17,15 +17,15 @@ This repo is the **React frontend**. The analysis happens in the Rails API: [bro
 | ![Topic breakdown and most visited sites](docs/screenshots/explored.jpg) | ![Heatmap](docs/screenshots/rhythm.jpg) |
 | **Knowledge map** | **Persona card (downloaded PNG)** |
 | ![Topic graph](docs/screenshots/universe.jpg) | ![1080×1350 persona card image](docs/screenshots/persona-card.jpg) |
-| **Mobile (375 px)** | |
-| ![Results page on a phone](docs/screenshots/mobile-results.jpg) | |
+| **Export guide** | **Mobile (375 px)** |
+| ![Where to find your history file: browser tabs with copyable file paths](docs/screenshots/export-guide.jpg) | ![Results page on a phone](docs/screenshots/mobile-results.jpg) |
 
 > Screenshots use the synthetic sample file from the API repo (`sample/sample_history.json`), not real browsing data.
 
 ## Features
 
 - **Try with sample data:** one click shows a full report from a synthetic history, no export needed
-- **Upload or import:** drop a Chrome Takeout JSON, an extension export (JSON or CSV), or the browser's own history database: Chrome/Edge `History`, Firefox `places.sqlite` or Safari `History.db`. The API can also read Chrome's local database directly when it runs on the same machine
+- **Upload or import:** drop a Chrome Takeout JSON, an extension export (JSON or CSV), or the browser's own SQLite history database: Chrome/Edge `History`, Firefox `places.sqlite` or Safari `History.db` (the file picker has no extension filter, so the extensionless `History` file can be chosen). When the API runs on your own machine, "Import from Chrome" reads Chrome's database directly
 - **Export guide:** step-by-step tabs for Chrome, Firefox, Safari, Edge and other browsers, with file locations on macOS, Windows and Linux and a one-click copy for each path. It opens on the visitor's own browser
 - **Persona card:** a fun "you are…" summary (The Builder, The AI Pioneer…) based on your top topics
 - **Download image:** save your persona card as a 1080×1350 PNG (persona, top topics, key stats), made in your browser
@@ -37,7 +37,8 @@ This repo is the **React frontend**. The analysis happens in the Rails API: [bro
 - **Large files:** big uploads are analysed in the background; `/analyses/:id` shows a processing screen and polls until the report is ready
 - **Share links:** "Share my report" creates a public `/r/:token` page with aggregated stats only (no URLs, titles, searches or site names), which you can delete at any time
 - **Accessible and responsive:** works from 375 px phones up, keyboard friendly (skip link, visible focus), WCAG AA contrast, and every chart has a text alternative
-- **Friendly errors:** unsupported or empty files, oversized uploads and rate limits get a plain-English message instead of a crash
+- **Friendly errors:** unsupported or empty files, databases that aren't browser history or were copied half-written, oversized uploads and rate limits (with the real wait from `Retry-After`) get a plain-English message instead of a crash
+- **Ready to deploy:** Vercel config with SPA rewrites, a strict Content Security Policy and security headers; the API URL comes from `VITE_API_URL`, and report pages and charts load as separate chunks
 - **Tested:** Vitest + React Testing Library suite (pages, period comparison, persona image, error copy, skip link), run with lint and the build in CI
 
 ## Tech stack
