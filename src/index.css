@@ -1,6 +1,19 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+/* Tailwind theme additions (was tailwind.config.js before Tailwind 4):
+   bg-surface, border-border and friends. */
+@theme {
+  --color-surface: #12121a;
+  --color-border: rgba(255,255,255,0.08);
+}
+
+/* Tailwind 4 changed the default border colour to currentColor; keep the
+   v3 default so a bare `border` class looks the same as before. */
+@layer base {
+  *, ::after, ::before, ::backdrop, ::file-selector-button {
+    border-color: #e5e7eb; /* v3 gray-200 */
+  }
+}
 
 /* ── Tokens ─────────────────────────────────────────── */
 :root {

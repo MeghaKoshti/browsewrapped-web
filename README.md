@@ -43,7 +43,7 @@ This repo is the **React frontend**. The analysis happens in the Rails API: [bro
 ## Tech stack
 
 - React 19 + Vite
-- Tailwind CSS 3
+- Tailwind CSS 4 (CSS-first config in `src/index.css`, via `@tailwindcss/vite`)
 - Recharts for charts, D3 for the force-directed knowledge map
 - Axios for API calls
 - Vercel for hosting (SPA rewrites and security headers in `vercel.json`)
