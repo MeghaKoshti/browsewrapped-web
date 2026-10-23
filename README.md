@@ -60,6 +60,15 @@ Upload `sample/sample_history.json` from the API repo, or export your own histor
 - **Chrome:** [Google Takeout](https://takeout.google.com) → Chrome → `BrowserHistory.json`
 - **Firefox / others:** use an "Export Browsing History" add-on to get a CSV or JSON file
 
+### Test
+
+```bash
+npm test          # run the Vitest + React Testing Library suite once
+npm run test:watch
+```
+
+Tests run in jsdom with the API client mocked, so no API server is needed. CI runs lint, tests and the build on every pull request.
+
 ### Build
 
 ```bash

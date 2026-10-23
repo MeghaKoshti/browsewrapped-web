@@ -1,0 +1,832 @@
+{
+  "summary": {
+    "total_visits": 1540,
+    "unique_domains": 142,
+    "date_range": {
+      "start": "2026-08-02",
+      "end": "2026-09-30"
+    },
+    "total_days": 60,
+    "top_topic": "Programming",
+    "top_domain": "github.com",
+    "has_timestamps": true,
+    "has_duration_data": true,
+    "total_hours_browsed": 25.4,
+    "avg_daily_minutes": 25,
+    "peak_hour": 14,
+    "weekend_pct": 15.6
+  },
+  "persona": {
+    "id": "builder",
+    "title": "The Builder",
+    "color": "#6366f1",
+    "description": "Your history reads like a library of docs, repos, and Stack Overflow answers. You ship things.",
+    "traits": [
+      "Night owl",
+      "Deep diver",
+      "Docs reader"
+    ],
+    "stat_label": "39% of your visits were programming"
+  },
+  "topics": [
+    {
+      "name": "Programming",
+      "visits": 610,
+      "percentage": 39.6,
+      "color": "#6366f1"
+    },
+    {
+      "name": "AI & ML",
+      "visits": 330,
+      "percentage": 21.4,
+      "color": "#a855f7"
+    },
+    {
+      "name": "Tech News",
+      "visits": 210,
+      "percentage": 13.6,
+      "color": "#f59e0b"
+    },
+    {
+      "name": "Entertainment",
+      "visits": 180,
+      "percentage": 11.7,
+      "color": "#10b981"
+    },
+    {
+      "name": "Social Media",
+      "visits": 120,
+      "percentage": 7.8,
+      "color": "#ec4899"
+    },
+    {
+      "name": "Education",
+      "visits": 90,
+      "percentage": 5.8,
+      "color": "#06b6d4"
+    }
+  ],
+  "time_by_topic": [
+    {
+      "name": "Programming",
+      "color": "#6366f1",
+      "hours": 10.17,
+      "minutes": 610,
+      "visits_with_duration": 488,
+      "percentage": 39.6
+    },
+    {
+      "name": "AI & ML",
+      "color": "#a855f7",
+      "hours": 5.5,
+      "minutes": 330,
+      "visits_with_duration": 264,
+      "percentage": 21.4
+    },
+    {
+      "name": "Tech News",
+      "color": "#f59e0b",
+      "hours": 3.5,
+      "minutes": 210,
+      "visits_with_duration": 168,
+      "percentage": 13.6
+    },
+    {
+      "name": "Entertainment",
+      "color": "#10b981",
+      "hours": 3,
+      "minutes": 180,
+      "visits_with_duration": 144,
+      "percentage": 11.7
+    },
+    {
+      "name": "Social Media",
+      "color": "#ec4899",
+      "hours": 2,
+      "minutes": 120,
+      "visits_with_duration": 96,
+      "percentage": 7.8
+    },
+    {
+      "name": "Education",
+      "color": "#06b6d4",
+      "hours": 1.5,
+      "minutes": 90,
+      "visits_with_duration": 72,
+      "percentage": 5.8
+    }
+  ],
+  "daily_pattern": [
+    {
+      "hour": 0,
+      "visits": 0
+    },
+    {
+      "hour": 1,
+      "visits": 2
+    },
+    {
+      "hour": 2,
+      "visits": 4
+    },
+    {
+      "hour": 3,
+      "visits": 6
+    },
+    {
+      "hour": 4,
+      "visits": 8
+    },
+    {
+      "hour": 5,
+      "visits": 10
+    },
+    {
+      "hour": 6,
+      "visits": 12
+    },
+    {
+      "hour": 7,
+      "visits": 40
+    },
+    {
+      "hour": 8,
+      "visits": 52
+    },
+    {
+      "hour": 9,
+      "visits": 63
+    },
+    {
+      "hour": 10,
+      "visits": 73
+    },
+    {
+      "hour": 11,
+      "visits": 82
+    },
+    {
+      "hour": 12,
+      "visits": 90
+    },
+    {
+      "hour": 13,
+      "visits": 95
+    },
+    {
+      "hour": 14,
+      "visits": 99
+    },
+    {
+      "hour": 15,
+      "visits": 100
+    },
+    {
+      "hour": 16,
+      "visits": 99
+    },
+    {
+      "hour": 17,
+      "visits": 95
+    },
+    {
+      "hour": 18,
+      "visits": 90
+    },
+    {
+      "hour": 19,
+      "visits": 82
+    },
+    {
+      "hour": 20,
+      "visits": 73
+    },
+    {
+      "hour": 21,
+      "visits": 63
+    },
+    {
+      "hour": 22,
+      "visits": 52
+    },
+    {
+      "hour": 23,
+      "visits": 40
+    }
+  ],
+  "weekly_pattern": [
+    {
+      "day": "Sun",
+      "visits": 120
+    },
+    {
+      "day": "Mon",
+      "visits": 260
+    },
+    {
+      "day": "Tue",
+      "visits": 250
+    },
+    {
+      "day": "Wed",
+      "visits": 240
+    },
+    {
+      "day": "Thu",
+      "visits": 230
+    },
+    {
+      "day": "Fri",
+      "visits": 190
+    },
+    {
+      "day": "Sat",
+      "visits": 110
+    }
+  ],
+  "monthly_trends": {
+    "labels": [
+      "Programming",
+      "AI & ML"
+    ],
+    "data": [
+      {
+        "month": "2026-08",
+        "Programming": 280,
+        "AI & ML": 140
+      },
+      {
+        "month": "2026-09",
+        "Programming": 330,
+        "AI & ML": 190
+      }
+    ]
+  },
+  "heatmap": {
+    "grid": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        8,
+        11,
+        1,
+        4,
+        7,
+        10,
+        0,
+        3,
+        6,
+        9,
+        12,
+        2,
+        5,
+        8,
+        11,
+        1,
+        4
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        2,
+        5,
+        8,
+        11,
+        1,
+        4,
+        7,
+        10,
+        0,
+        3,
+        6,
+        9,
+        12,
+        2,
+        5,
+        8,
+        11
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        9,
+        12,
+        2,
+        5,
+        8,
+        11,
+        1,
+        4,
+        7,
+        10,
+        0,
+        3,
+        6,
+        9,
+        12,
+        2,
+        5
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        3,
+        6,
+        9,
+        12,
+        2,
+        5,
+        8,
+        11,
+        1,
+        4,
+        7,
+        10,
+        0,
+        3,
+        6,
+        9,
+        12
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        10,
+        0,
+        3,
+        6,
+        9,
+        12,
+        2,
+        5,
+        8,
+        11,
+        1,
+        4,
+        7,
+        10,
+        0,
+        3,
+        6
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        4,
+        7,
+        10,
+        0,
+        3,
+        6,
+        9,
+        12,
+        2,
+        5,
+        8,
+        11,
+        1,
+        4,
+        7,
+        10,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        11,
+        1,
+        4,
+        7,
+        10,
+        0,
+        3,
+        6,
+        9,
+        12,
+        2,
+        5,
+        8,
+        11,
+        1,
+        4,
+        7
+      ]
+    ],
+    "max": 12,
+    "day_labels": [
+      "Sun",
+      "Mon",
+      "Tue",
+      "Wed",
+      "Thu",
+      "Fri",
+      "Sat"
+    ]
+  },
+  "activity_calendar": {
+    "days": [
+      {
+        "date": "2026-08-02",
+        "visits": 0
+      },
+      {
+        "date": "2026-08-03",
+        "visits": 23
+      },
+      {
+        "date": "2026-08-04",
+        "visits": 36
+      },
+      {
+        "date": "2026-08-05",
+        "visits": 49
+      },
+      {
+        "date": "2026-08-06",
+        "visits": 22
+      },
+      {
+        "date": "2026-08-07",
+        "visits": 0
+      },
+      {
+        "date": "2026-08-08",
+        "visits": 48
+      },
+      {
+        "date": "2026-08-09",
+        "visits": 21
+      },
+      {
+        "date": "2026-08-10",
+        "visits": 34
+      },
+      {
+        "date": "2026-08-11",
+        "visits": 47
+      },
+      {
+        "date": "2026-08-12",
+        "visits": 0
+      },
+      {
+        "date": "2026-08-13",
+        "visits": 33
+      },
+      {
+        "date": "2026-08-14",
+        "visits": 46
+      },
+      {
+        "date": "2026-08-15",
+        "visits": 19
+      },
+      {
+        "date": "2026-08-16",
+        "visits": 32
+      },
+      {
+        "date": "2026-08-17",
+        "visits": 0
+      },
+      {
+        "date": "2026-08-18",
+        "visits": 18
+      },
+      {
+        "date": "2026-08-19",
+        "visits": 31
+      },
+      {
+        "date": "2026-08-20",
+        "visits": 44
+      },
+      {
+        "date": "2026-08-21",
+        "visits": 17
+      },
+      {
+        "date": "2026-08-22",
+        "visits": 0
+      },
+      {
+        "date": "2026-08-23",
+        "visits": 43
+      },
+      {
+        "date": "2026-08-24",
+        "visits": 16
+      },
+      {
+        "date": "2026-08-25",
+        "visits": 29
+      },
+      {
+        "date": "2026-08-26",
+        "visits": 42
+      },
+      {
+        "date": "2026-08-27",
+        "visits": 0
+      },
+      {
+        "date": "2026-08-28",
+        "visits": 28
+      },
+      {
+        "date": "2026-08-29",
+        "visits": 41
+      },
+      {
+        "date": "2026-08-30",
+        "visits": 14
+      },
+      {
+        "date": "2026-08-31",
+        "visits": 27
+      },
+      {
+        "date": "2026-09-01",
+        "visits": 0
+      },
+      {
+        "date": "2026-09-02",
+        "visits": 13
+      },
+      {
+        "date": "2026-09-03",
+        "visits": 26
+      },
+      {
+        "date": "2026-09-04",
+        "visits": 39
+      },
+      {
+        "date": "2026-09-05",
+        "visits": 12
+      },
+      {
+        "date": "2026-09-06",
+        "visits": 0
+      },
+      {
+        "date": "2026-09-07",
+        "visits": 38
+      },
+      {
+        "date": "2026-09-08",
+        "visits": 11
+      },
+      {
+        "date": "2026-09-09",
+        "visits": 24
+      },
+      {
+        "date": "2026-09-10",
+        "visits": 37
+      },
+      {
+        "date": "2026-09-11",
+        "visits": 0
+      },
+      {
+        "date": "2026-09-12",
+        "visits": 23
+      },
+      {
+        "date": "2026-09-13",
+        "visits": 36
+      },
+      {
+        "date": "2026-09-14",
+        "visits": 49
+      },
+      {
+        "date": "2026-09-15",
+        "visits": 22
+      },
+      {
+        "date": "2026-09-16",
+        "visits": 0
+      },
+      {
+        "date": "2026-09-17",
+        "visits": 48
+      },
+      {
+        "date": "2026-09-18",
+        "visits": 21
+      },
+      {
+        "date": "2026-09-19",
+        "visits": 34
+      },
+      {
+        "date": "2026-09-20",
+        "visits": 47
+      },
+      {
+        "date": "2026-09-21",
+        "visits": 0
+      },
+      {
+        "date": "2026-09-22",
+        "visits": 33
+      },
+      {
+        "date": "2026-09-23",
+        "visits": 46
+      },
+      {
+        "date": "2026-09-24",
+        "visits": 19
+      },
+      {
+        "date": "2026-09-25",
+        "visits": 32
+      },
+      {
+        "date": "2026-09-26",
+        "visits": 0
+      },
+      {
+        "date": "2026-09-27",
+        "visits": 18
+      },
+      {
+        "date": "2026-09-28",
+        "visits": 31
+      },
+      {
+        "date": "2026-09-29",
+        "visits": 44
+      },
+      {
+        "date": "2026-09-30",
+        "visits": 17
+      }
+    ],
+    "max": 49
+  },
+  "sessions": {
+    "total_sessions": 184,
+    "avg_duration_minutes": 8.3,
+    "longest_session_minutes": 96.5,
+    "total_hours_browsed": 25.4
+  },
+  "streaks": {
+    "current": 4,
+    "longest": 11,
+    "total_active_days": 48,
+    "last_active": "2026-09-30"
+  },
+  "topic_momentum": {
+    "rising": [
+      {
+        "topic": "AI & ML",
+        "first_pct": 18.2,
+        "second_pct": 22.9,
+        "delta": 4.7,
+        "color": "#a855f7"
+      }
+    ],
+    "falling": [
+      {
+        "topic": "Entertainment",
+        "first_pct": 14.1,
+        "second_pct": 9.8,
+        "delta": -4.3,
+        "color": "#10b981"
+      }
+    ],
+    "first_label": "Aug",
+    "second_label": "Sep 2026"
+  },
+  "top_domains": [
+    {
+      "domain": "github.com",
+      "visits": 320,
+      "color": "#6366f1"
+    },
+    {
+      "domain": "stackoverflow.com",
+      "visits": 190,
+      "color": "#6366f1"
+    },
+    {
+      "domain": "huggingface.co",
+      "visits": 140,
+      "color": "#a855f7"
+    }
+  ],
+  "top_pages": [
+    {
+      "url": "https://github.com/rails/rails",
+      "title": "rails/rails: Ruby on Rails",
+      "domain": "github.com",
+      "visits": 42,
+      "color": "#6366f1",
+      "duration_min": 31
+    }
+  ],
+  "top_searches": [
+    {
+      "query": "rails 8 solid queue",
+      "count": 9
+    },
+    {
+      "query": "react 19 use hook",
+      "count": 5
+    }
+  ],
+  "chrome_searches": [],
+  "intent": {
+    "typed_pct": 22.5,
+    "search_pct": 31.2,
+    "link_pct": 40.1,
+    "other_pct": 6.2,
+    "typed_count": 349,
+    "link_count": 621,
+    "search_count": 483,
+    "top_intentional": [
+      {
+        "domain": "github.com",
+        "typed_count": 120
+      }
+    ]
+  },
+  "knowledge_graph": {
+    "nodes": [
+      {
+        "id": "Programming",
+        "label": "Programming",
+        "size": 610,
+        "color": "#6366f1"
+      },
+      {
+        "id": "AI & ML",
+        "label": "AI & ML",
+        "size": 330,
+        "color": "#a855f7"
+      },
+      {
+        "id": "Tech News",
+        "label": "Tech News",
+        "size": 210,
+        "color": "#f59e0b"
+      }
+    ],
+    "edges": [
+      {
+        "source": "Programming",
+        "target": "AI & ML",
+        "weight": 40
+      },
+      {
+        "source": "Programming",
+        "target": "Tech News",
+        "weight": 12
+      }
+    ]
+  },
+  "meta": {
+    "total_entries_parsed": 1540,
+    "source": "upload",
+    "ai_classified_domains": 3
+  }
+}
