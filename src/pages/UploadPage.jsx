@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react'
+import { useState, useRef, useCallback, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { createAnalysis, analyzeChrome, fetchSampleReport } from '../api/client'
 import { errorMessage } from '../api/errorMessage'
@@ -14,8 +14,15 @@ export default function UploadPage() {
   const [loadingMsg, setLoadingMsg] = useState('')
   const [error, setError] = useState('')
   const inputRef = useRef(null)
+  const errorRef = useRef(null)
   const navigate = useNavigate()
   useDocumentTitle('Your year in tabs')
+
+  // The error box renders under the drop zone, below the fold on most
+  // laptops and phones, so bring it into view or the upload looks ignored.
+  useEffect(() => {
+    if (state === 'error') errorRef.current?.scrollIntoView?.({ block: 'nearest', behavior: 'smooth' })
+  }, [state, error])
 
   const onSuccess = useCallback((data, filename) => {
     navigate('/results', { state: { data, filename } })
@@ -281,7 +288,7 @@ export default function UploadPage() {
 
         {/* Error */}
         {state === 'error' && (
-          <div role="alert" style={{
+          <div ref={errorRef} role="alert" style={{
             marginTop: 14, padding: '12px 16px', borderRadius: 12, textAlign: 'center',
             background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)',
           }}>

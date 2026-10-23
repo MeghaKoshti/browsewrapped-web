@@ -65,4 +65,21 @@ describe('UploadPage', () => {
 
     expect(await screen.findByText('Too many requests right now. Please wait 60 seconds and try again.')).toBeInTheDocument()
   })
+
+  it('scrolls the error into view, since it sits below the fold on most screens', async () => {
+    const scrollIntoView = vi.fn()
+    window.HTMLElement.prototype.scrollIntoView = scrollIntoView
+    vi.mocked(createAnalysis).mockRejectedValue({
+      response: { status: 422, data: { error: { code: 'empty_file', message: 'The file is empty' } } },
+    })
+    const { container } = renderUpload()
+
+    await userEvent.upload(container.querySelector('input[type="file"]'), new File([''], 'empty.json'))
+
+    const alert = await screen.findByRole('alert')
+    expect(alert).toHaveTextContent('The file is empty')
+    expect(scrollIntoView).toHaveBeenCalled()
+    expect(scrollIntoView.mock.contexts[0]).toBe(alert)
+    delete window.HTMLElement.prototype.scrollIntoView
+  })
 })
