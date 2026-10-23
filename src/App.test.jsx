@@ -12,6 +12,10 @@ vi.mock('./api/client', () => ({
   analyzeChrome: vi.fn(),
 }))
 
+// Lazy chunks are transformed on first import, which can take a few
+// seconds on a busy machine.
+const slow = { timeout: 8000 }
+
 describe('App routing (code-split pages)', () => {
   afterEach(() => window.history.pushState({}, '', '/'))
 
@@ -27,10 +31,10 @@ describe('App routing (code-split pages)', () => {
     render(<App />)
 
     expect(screen.getByRole('status')).toHaveTextContent('Loading your report…')
-    expect(await screen.findByRole('heading', { name: 'The Builder' })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'The Builder' }, slow)).toBeInTheDocument()
     expect(getSharedReport).toHaveBeenCalledWith('tok', expect.anything())
 
     // The D3 knowledge map is its own chunk and arrives after the report.
-    expect(await screen.findByRole('img', { name: /knowledge map/i })).toBeInTheDocument()
+    expect(await screen.findByRole('img', { name: /knowledge map/i }, slow)).toBeInTheDocument()
   })
 })
