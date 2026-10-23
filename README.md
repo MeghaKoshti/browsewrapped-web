@@ -10,11 +10,15 @@ This repo is the **React frontend**. The analysis happens in the Rails API: [bro
 
 ## Screenshots
 
-| Upload | What you explored |
+| Upload | Then vs now |
 |---|---|
-| ![Upload page](docs/screenshots/upload.jpg) | ![Topic breakdown and most visited sites](docs/screenshots/explored.jpg) |
-| **Browsing rhythm (day × hour heatmap)** | **Knowledge map** |
-| ![Heatmap](docs/screenshots/rhythm.jpg) | ![Topic graph](docs/screenshots/universe.jpg) |
+| ![Upload page](docs/screenshots/upload.jpg) | ![Last 30 days compared with the 30 days before](docs/screenshots/then-vs-now.jpg) |
+| **What you explored** | **Browsing rhythm (day × hour heatmap)** |
+| ![Topic breakdown and most visited sites](docs/screenshots/explored.jpg) | ![Heatmap](docs/screenshots/rhythm.jpg) |
+| **Knowledge map** | **Persona card (downloaded PNG)** |
+| ![Topic graph](docs/screenshots/universe.jpg) | ![1080×1350 persona card image](docs/screenshots/persona-card.jpg) |
+| **Mobile (375 px)** | |
+| ![Results page on a phone](docs/screenshots/mobile-results.jpg) | |
 
 > Screenshots use the synthetic sample file from the API repo (`sample/sample_history.json`), not real browsing data.
 
@@ -32,6 +36,8 @@ This repo is the **React frontend**. The analysis happens in the Rails API: [bro
 - **Large files:** big uploads are analysed in the background; `/analyses/:id` shows a processing screen and polls until the report is ready
 - **Share links:** "Share my report" creates a public `/r/:token` page with aggregated stats only (no URLs, titles, searches or site names), which you can delete at any time
 - **Accessible and responsive:** works from 375 px phones up, keyboard friendly (skip link, visible focus), WCAG AA contrast, and every chart has a text alternative
+- **Friendly errors:** unsupported or empty files, oversized uploads and rate limits get a plain-English message instead of a crash
+- **Tested:** Vitest + React Testing Library suite (pages, period comparison, persona image, error copy, skip link), run with lint and the build in CI
 
 ## Tech stack
 
