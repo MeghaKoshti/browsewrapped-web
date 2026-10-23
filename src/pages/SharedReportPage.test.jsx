@@ -29,6 +29,14 @@ describe('SharedReportPage', () => {
     expect(screen.getByRole('button', { name: /make your own wrapped/i })).toBeInTheDocument()
   })
 
+  it('renders a shared report whose period comparison is null', async () => {
+    vi.mocked(getSharedReport).mockResolvedValue({ token: 'tok123', report: { ...report, period_comparison: null }, expires_at: '2026-11-22T00:00:00Z' })
+    renderShared()
+
+    expect(await screen.findByRole('heading', { name: 'The Builder' })).toBeInTheDocument()
+    expect(screen.queryByText('Then vs now')).not.toBeInTheDocument()
+  })
+
   it('shows a generic error when the server fails', async () => {
     vi.mocked(getSharedReport).mockRejectedValue({ response: { status: 500 } })
     renderShared()
@@ -46,5 +54,6 @@ describe('SharedReportPage', () => {
     expect(screen.getByRole('button', { name: /delete this link/i })).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /share my report/i })).not.toBeInTheDocument()
     expect(getSharedReport).toHaveBeenCalledWith('tok123', expect.anything())
+    expect(screen.getByRole('heading', { name: 'Last 30 days vs the 30 days before' })).toBeInTheDocument()
   })
 })

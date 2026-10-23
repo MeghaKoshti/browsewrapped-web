@@ -26,7 +26,8 @@ const tick = (ms = 0) => act(() => vi.advanceTimersByTimeAsync(ms))
 
 describe('AnalysisPage (processing + polling)', () => {
   beforeEach(() => {
-    vi.useFakeTimers()
+    // Only fake the poll timer; charts keep their real animation frames.
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] })
     vi.mocked(getAnalysis).mockReset()
   })
   afterEach(() => { vi.useRealTimers() })

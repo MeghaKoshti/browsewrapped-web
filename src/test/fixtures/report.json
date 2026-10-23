@@ -828,5 +828,69 @@
     "total_entries_parsed": 1540,
     "source": "upload",
     "ai_classified_domains": 3
+  },
+  "period_comparison": {
+    "window_days": 30,
+    "current": {
+      "label": "Last 30 days",
+      "from": "2026-09-01",
+      "to": "2026-09-30",
+      "visits": 820,
+      "active_days": 25,
+      "hours": 12.4,
+      "top_topic": "Programming"
+    },
+    "previous": {
+      "label": "Previous 30 days",
+      "from": "2026-08-02",
+      "to": "2026-08-31",
+      "visits": 731,
+      "active_days": 22,
+      "hours": 13,
+      "top_topic": "AI & ML"
+    },
+    "changes": {
+      "visits_pct": 12.2,
+      "active_days_delta": 3,
+      "hours_pct": -4.6
+    },
+    "topics": [
+      {
+        "topic": "Programming",
+        "current": 300,
+        "previous": 250,
+        "change_pct": 20
+      },
+      {
+        "topic": "AI & ML",
+        "current": 190,
+        "previous": 140,
+        "change_pct": 35.7
+      },
+      {
+        "topic": "Tech News",
+        "current": 110,
+        "previous": 100,
+        "change_pct": 10
+      },
+      {
+        "topic": "Entertainment",
+        "current": 70,
+        "previous": 110,
+        "change_pct": -36.4
+      },
+      {
+        "topic": "Social Media",
+        "current": 60,
+        "previous": 70,
+        "change_pct": -14.3
+      },
+      {
+        "topic": "Education",
+        "current": 40,
+        "previous": 0,
+        "change_pct": null
+      }
+    ]
   }
 }

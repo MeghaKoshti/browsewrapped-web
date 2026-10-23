@@ -17,6 +17,7 @@ import TopDomains from '../domain/TopDomains'
 import TopPages from '../domain/TopPages'
 import SearchCloud from '../search/SearchCloud'
 import KnowledgeMap from '../graph/KnowledgeMap'
+import PeriodComparison from './PeriodComparison'
 
 function fmt(n) {
   if (n == null) return '—'
@@ -45,7 +46,7 @@ export default function ReportView({ data, filename, banner = null, actions = nu
     summary, persona, topics, time_by_topic, daily_pattern, weekly_pattern,
     monthly_trends, heatmap, activity_calendar, sessions, streaks, topic_momentum,
     top_domains, top_pages, top_searches, chrome_searches, intent,
-    knowledge_graph, meta,
+    knowledge_graph, meta, period_comparison,
   } = data
 
   const topTopicColor   = topics?.find((t) => t.name === summary.top_topic)?.color || '#a855f7'
@@ -166,6 +167,9 @@ export default function ReportView({ data, filename, banner = null, actions = nu
             color="#06b6d4"
           />
         </div>
+
+        {/* ─ Then vs now (missing on older reports, null for short histories) ─ */}
+        <PeriodComparison comparison={period_comparison} />
 
         {/* ─ Time by topic ─ */}
         {hasDuration && (

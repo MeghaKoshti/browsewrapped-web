@@ -26,6 +26,7 @@ This repo is the **React frontend**. The analysis happens in the Rails API: [bro
 - **Stats:** total visits, hours browsed, daily average, top interest, streaks
 - **Charts:** topic breakdown, most-visited sites and pages, activity calendar, day × hour heatmap, weekly and monthly patterns
 - **Trends:** which interests are rising or falling, and how your curiosity shifted over time
+- **Then vs now:** your latest 30 days against the 30 before (visits, active days, hours and topics), with a text summary and table view of the chart
 - **Knowledge map:** an interactive graph of topic clusters (drag to explore)
 - **Large files:** big uploads are analysed in the background; `/analyses/:id` shows a processing screen and polls until the report is ready
 - **Share links:** "Share my report" creates a public `/r/:token` page with aggregated stats only (no URLs, titles, searches or site names), which you can delete at any time

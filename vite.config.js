@@ -17,5 +17,7 @@ export default defineConfig({
     include: ['src/**/*.test.{js,jsx}'],
     // Keep test output readable: CSS isn't needed to assert on behaviour.
     css: false,
+    // Full report pages render a lot of SVG; give slow CI runners headroom.
+    testTimeout: 15000,
   },
 })

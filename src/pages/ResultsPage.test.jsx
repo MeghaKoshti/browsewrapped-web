@@ -33,17 +33,29 @@ describe('ResultsPage', () => {
     expect(screen.getByText('1.5k')).toBeInTheDocument()
     expect(screen.getAllByText('25.4h').length).toBeGreaterThan(0)
 
-    // Sections that depend on data being present
-    for (const title of [
+    // Sections that depend on data being present. One heading query keeps
+    // this fast: role queries over the whole report are slow in jsdom.
+    const headings = screen.getAllByRole('heading', { level: 2 }).map((h) => h.textContent)
+    expect(headings).toEqual(expect.arrayContaining([
       'Where Your Hours Went', 'How You Browse', 'What You Explored', 'Your Most Visited',
       'Your Browsing Rhythm', 'When You Browse', "What's Changing", 'How You Discover Content',
       'What You Were Looking For', 'Your Digital Universe',
-    ]) {
-      expect(screen.getByRole('heading', { name: title })).toBeInTheDocument()
-    }
+    ]))
 
     expect(screen.getByText('stackoverflow.com')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /share my report/i })).toBeInTheDocument()
+  })
+
+  it('shows the "Then vs now" section when the report has a period comparison', () => {
+    renderResults({ data: report })
+    expect(screen.getByRole('heading', { name: 'Last 30 days vs the 30 days before' })).toBeInTheDocument()
+  })
+
+  it('leaves out "Then vs now" for older reports without period_comparison', () => {
+    const older = { ...report }
+    delete older.period_comparison
+    renderResults({ data: older })
+    expect(screen.queryByText('Then vs now')).not.toBeInTheDocument()
   })
 
   it('hides sections whose data is missing', () => {
