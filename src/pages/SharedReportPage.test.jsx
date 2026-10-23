@@ -55,5 +55,6 @@ describe('SharedReportPage', () => {
     expect(screen.queryByRole('button', { name: /share my report/i })).not.toBeInTheDocument()
     expect(getSharedReport).toHaveBeenCalledWith('tok123', expect.anything())
     expect(screen.getByRole('heading', { name: 'Last 30 days vs the 30 days before' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Download image' })).toBeInTheDocument()
   })
 })

@@ -23,6 +23,7 @@ This repo is the **React frontend**. The analysis happens in the Rails API: [bro
 - **Try with sample data:** one click shows a full report from a synthetic history, no export needed
 - **Upload or import:** drop a Chrome Takeout JSON, an extension export (JSON) or a CSV, or let the API read Chrome's local history database (when the API runs on the same machine)
 - **Persona card:** a fun "you are…" summary (The Builder, The AI Pioneer…) based on your top topics
+- **Download image:** save your persona card as a 1080×1350 PNG (persona, top topics, key stats), made in your browser
 - **Stats:** total visits, hours browsed, daily average, top interest, streaks
 - **Charts:** topic breakdown, most-visited sites and pages, activity calendar, day × hour heatmap, weekly and monthly patterns
 - **Trends:** which interests are rising or falling, and how your curiosity shifted over time

@@ -27,6 +27,7 @@ describe('ResultsPage', () => {
     // Persona
     expect(screen.getByRole('heading', { name: 'The Builder' })).toBeInTheDocument()
     expect(screen.getByText('Night owl')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Download image' })).toBeInTheDocument()
 
     // Stat cards
     expect(screen.getByText('Total visits')).toBeInTheDocument()

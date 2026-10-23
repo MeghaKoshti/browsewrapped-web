@@ -1,3 +1,5 @@
+import DownloadCardButton from './DownloadCardButton'
+
 function hexToRgb(hex) {
   if (!hex || hex.length < 7) return '168,85,247'
   const r = parseInt(hex.slice(1, 3), 16)
@@ -6,7 +8,8 @@ function hexToRgb(hex) {
   return `${r},${g},${b}`
 }
 
-export default function PersonaCard({ persona }) {
+// report – the full report, used to build the downloadable image (optional)
+export default function PersonaCard({ persona, report = null }) {
   if (!persona?.title) return null
 
   const rgb = hexToRgb(persona.color)
@@ -83,6 +86,12 @@ export default function PersonaCard({ persona }) {
         }}>
           {persona.stat_label}
         </p>
+      )}
+
+      {report && (
+        <div style={{ marginTop: 24, position: 'relative' }}>
+          <DownloadCardButton report={report} color={persona.color} />
+        </div>
       )}
     </div>
   )

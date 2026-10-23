@@ -148,7 +148,7 @@ export default function ReportView({ data, filename, banner = null, actions = nu
       <main style={{ maxWidth: 980, margin: '0 auto', padding: '32px 20px 0', display: 'flex', flexDirection: 'column', gap: 20 }}>
 
         {/* ─ Persona ─ */}
-        {persona && <PersonaCard persona={persona} />}
+        {persona && <PersonaCard persona={persona} report={data} />}
 
         {/* ─ Stat cards ─ */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 14 }}>
