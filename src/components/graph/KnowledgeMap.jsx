@@ -51,6 +51,10 @@ export default function KnowledgeMap({ nodes, edges }) {
       .force('link', d3.forceLink(simEdges).id((d) => d.id).distance(140).strength(0.35))
       .force('charge', d3.forceManyBody().strength(-500))
       .force('center', d3.forceCenter(W / 2, H / 2))
+      // forceCenter only moves the whole graph; a topic with no edges was
+      // pushed by the charge into a corner. A weak pull keeps it near the rest.
+      .force('x', d3.forceX(W / 2).strength(0.08))
+      .force('y', d3.forceY(H / 2).strength(0.08))
       .force('collision', d3.forceCollide().radius((d) => sizeScale(d.size) + 22))
 
     // Edges
