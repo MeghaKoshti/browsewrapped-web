@@ -1,7 +1,8 @@
 function Metric({ label, value, sub, color = '#a855f7' }) {
   return (
     <div style={{
-      flex: '1 1 0', minWidth: 0, textAlign: 'center', padding: '16px 12px',
+      // 2×2 on phones, one row on wider screens.
+      flex: '1 1 130px', minWidth: 0, textAlign: 'center', padding: '16px 12px',
       borderRadius: 12, border: '1px solid var(--border)',
       background: 'rgba(255,255,255,0.015)',
     }}>
@@ -9,7 +10,7 @@ function Metric({ label, value, sub, color = '#a855f7' }) {
         fontFamily: 'var(--font-display)', fontSize: 'clamp(1.4rem, 3vw, 2rem)',
         fontWeight: 700, color, margin: 0, lineHeight: 1,
       }}>{value}</p>
-      {sub && <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: '#52526e', margin: '3px 0 0' }}>{sub}</p>}
+      {sub && <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: '#8b8ba7', margin: '3px 0 0' }}>{sub}</p>}
       <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--muted)', margin: '6px 0 0', letterSpacing: '0.08em', textTransform: 'uppercase' }}>{label}</p>
     </div>
   )
@@ -69,7 +70,7 @@ export default function SessionStats({ sessions, summary, streaks }) {
               <span style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 800, color: '#a855f7' }}>{streaks.current}</span>
               <div>
                 <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--muted)', margin: 0, textTransform: 'uppercase', letterSpacing: '0.08em' }}>day streak</p>
-                <p style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: 'rgba(82,82,110,0.7)', margin: 0 }}>current</p>
+                <p style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: 'var(--muted)', margin: 0 }}>current</p>
               </div>
             </div>
           )}
@@ -82,7 +83,7 @@ export default function SessionStats({ sessions, summary, streaks }) {
               <span style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 800, color: '#f59e0b' }}>{streaks.longest}</span>
               <div>
                 <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--muted)', margin: 0, textTransform: 'uppercase', letterSpacing: '0.08em' }}>day streak</p>
-                <p style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: 'rgba(82,82,110,0.7)', margin: 0 }}>longest ever</p>
+                <p style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: 'var(--muted)', margin: 0 }}>longest ever</p>
               </div>
             </div>
           )}
@@ -95,7 +96,7 @@ export default function SessionStats({ sessions, summary, streaks }) {
               <span style={{ fontFamily: 'var(--font-display)', fontSize: 20, fontWeight: 800, color: '#06b6d4' }}>{streaks.total_active_days}</span>
               <div>
                 <p style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--muted)', margin: 0, textTransform: 'uppercase', letterSpacing: '0.08em' }}>active days</p>
-                <p style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: 'rgba(82,82,110,0.7)', margin: 0 }}>in this history</p>
+                <p style={{ fontFamily: 'var(--font-mono)', fontSize: 9, color: 'var(--muted)', margin: 0 }}>in this history</p>
               </div>
             </div>
           )}

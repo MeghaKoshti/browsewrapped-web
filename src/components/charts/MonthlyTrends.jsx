@@ -1,4 +1,5 @@
 import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts'
+import { summarizeMonthlyTrends } from '../../lib/chartSummaries'
 
 const COLORS = ['#a855f7', '#ec4899', '#f97316', '#3b82f6', '#10b981', '#eab308']
 
@@ -6,7 +7,7 @@ const Tip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null
   return (
     <div style={{ background: '#13132a', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 10, padding: '10px 14px', minWidth: 140 }}>
-      <p style={{ margin: '0 0 6px', fontFamily: 'var(--font-mono)', fontSize: 11, color: '#6b7280' }}>{label}</p>
+      <p style={{ margin: '0 0 6px', fontFamily: 'var(--font-mono)', fontSize: 11, color: '#8b8ba7' }}>{label}</p>
       {payload.map((p) => (
         <div key={p.dataKey} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 3 }}>
           <span style={{ width: 6, height: 6, borderRadius: '50%', background: p.color, flexShrink: 0 }} />
@@ -24,19 +25,20 @@ export default function MonthlyTrends({ monthlyTrends }) {
   const { labels = [], data = [] } = monthlyTrends || {}
   if (!data.length || !labels.length) return null
   return (
+    <div role="img" aria-label={summarizeMonthlyTrends(monthlyTrends)}>
     <ResponsiveContainer width="100%" height={260}>
-      <LineChart data={data} margin={{ top: 4, right: 8, left: -35, bottom: 0 }}>
+      <LineChart accessibilityLayer={false} data={data} margin={{ top: 4, right: 16, left: 16, bottom: 0 }}>
         <XAxis
           dataKey="month"
           tickFormatter={(m) => m.slice(5)}
-          tick={{ fill: '#52526e', fontSize: 10, fontFamily: 'var(--font-mono)' }}
+          tick={{ fill: '#8b8ba7', fontSize: 10, fontFamily: 'var(--font-mono)' }}
           axisLine={false} tickLine={false}
         />
         <YAxis hide />
         <Tooltip content={<Tip />} />
         <Legend
           iconType="circle" iconSize={7}
-          formatter={(v) => <span style={{ fontFamily: 'var(--font-display)', fontSize: 11, color: '#6b7280' }}>{v}</span>}
+          formatter={(v) => <span style={{ fontFamily: 'var(--font-display)', fontSize: 11, color: '#8b8ba7' }}>{v}</span>}
         />
         {labels.map((label, i) => (
           <Line
@@ -47,5 +49,6 @@ export default function MonthlyTrends({ monthlyTrends }) {
         ))}
       </LineChart>
     </ResponsiveContainer>
+    </div>
   )
 }

@@ -8,7 +8,7 @@ const pillButton = {
   borderRadius: 100,
   border: '1px solid rgba(168,85,247,0.45)',
   background: 'rgba(168,85,247,0.12)',
-  color: 'var(--accent)',
+  color: 'var(--accent-text)',
   fontFamily: 'var(--font-display)',
   fontWeight: 600,
   fontSize: 14,

@@ -1,3 +1,5 @@
+import { textTint } from '../../lib/color'
+
 export default function StatCard({ label, value, sub, color }) {
   const glowRgb = color
     ? hexToRgb(color)
@@ -5,10 +7,10 @@ export default function StatCard({ label, value, sub, color }) {
 
   return (
     <div
-      className="card card-glow p-6 flex flex-col justify-between min-h-[130px]"
+      className="card card-glow p-6 flex flex-col justify-between min-h-[130px] min-w-0"
       style={{ '--glow-color': `rgba(${glowRgb},0.2)` }}
     >
-      <p className="section-label" style={{ color: color || 'var(--accent)' }}>{label}</p>
+      <p className="section-label" style={{ color: color ? textTint(color) : 'var(--accent)' }}>{label}</p>
       <div>
         <p
           className="display leading-none mt-2"
@@ -17,6 +19,7 @@ export default function StatCard({ label, value, sub, color }) {
             fontWeight: 700,
             color: color || 'var(--text)',
             letterSpacing: '-0.02em',
+            overflowWrap: 'anywhere',
           }}
         >
           {value}

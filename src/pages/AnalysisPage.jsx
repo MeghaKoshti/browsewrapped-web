@@ -5,6 +5,7 @@ import { getAnalysis } from '../api/client'
 import ReportView from '../components/report/ReportView'
 import ShareButton from '../components/report/ShareButton'
 import StatusScreen, { Spinner } from '../components/report/StatusScreen'
+import useDocumentTitle from '../hooks/useDocumentTitle'
 
 const POLL_INTERVAL_MS = 2000
 const MAX_NETWORK_RETRIES = 5
@@ -68,12 +69,16 @@ export default function AnalysisPage() {
   }, [id, initialResult])
 
   const filename = state?.filename || analysis.filename
+  const completed = analysis.status === 'completed' && analysis.result
+  const failed = analysis.status === 'failed' || loadError
+  // ReportView sets its own title once the report is ready.
+  useDocumentTitle(completed ? null : failed ? 'Analysis failed' : 'Analyzing your history')
 
-  if (analysis.status === 'completed' && analysis.result) {
+  if (completed) {
     return <ReportView data={analysis.result} filename={filename} actions={<ShareButton analysisId={id} />} />
   }
 
-  if (analysis.status === 'failed' || loadError) {
+  if (failed) {
     return (
       <StatusScreen>
         <span style={{ fontSize: 40 }} aria-hidden="true">😕</span>
@@ -90,7 +95,7 @@ export default function AnalysisPage() {
           onClick={() => navigate('/')}
           style={{
             padding: '10px 24px', borderRadius: 100, border: '1px solid rgba(168,85,247,0.45)',
-            background: 'rgba(168,85,247,0.1)', color: 'var(--accent)', fontFamily: 'var(--font-display)',
+            background: 'rgba(168,85,247,0.1)', color: 'var(--accent-text)', fontFamily: 'var(--font-display)',
             fontWeight: 600, fontSize: 14, cursor: 'pointer',
           }}
         >

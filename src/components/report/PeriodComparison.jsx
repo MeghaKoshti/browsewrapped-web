@@ -129,7 +129,7 @@ export default function PeriodComparison({ comparison }) {
           </p>
 
           <details style={{ marginTop: 10 }}>
-            <summary style={{ cursor: 'pointer', fontSize: 12, color: 'var(--accent)', width: 'fit-content' }}>Show as a table</summary>
+            <summary style={{ cursor: 'pointer', fontSize: 12, color: 'var(--accent-text)', width: 'fit-content' }}>Show as a table</summary>
             <div style={{ overflowX: 'auto', marginTop: 10 }}>
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12, color: 'var(--text)' }}>
                 <caption className="sr-only">Visits per topic, {previous.label.toLowerCase()} and {current.label.toLowerCase()}</caption>

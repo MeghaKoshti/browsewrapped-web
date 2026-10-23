@@ -31,6 +31,7 @@ This repo is the **React frontend**. The analysis happens in the Rails API: [bro
 - **Knowledge map:** an interactive graph of topic clusters (drag to explore)
 - **Large files:** big uploads are analysed in the background; `/analyses/:id` shows a processing screen and polls until the report is ready
 - **Share links:** "Share my report" creates a public `/r/:token` page with aggregated stats only (no URLs, titles, searches or site names), which you can delete at any time
+- **Accessible and responsive:** works from 375 px phones up, keyboard friendly (skip link, visible focus), WCAG AA contrast, and every chart has a text alternative
 
 ## Tech stack
 

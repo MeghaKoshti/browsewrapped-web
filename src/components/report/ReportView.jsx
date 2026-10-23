@@ -18,6 +18,7 @@ import TopPages from '../domain/TopPages'
 import SearchCloud from '../search/SearchCloud'
 import KnowledgeMap from '../graph/KnowledgeMap'
 import PeriodComparison from './PeriodComparison'
+import useDocumentTitle from '../../hooks/useDocumentTitle'
 
 function fmt(n) {
   if (n == null) return '—'
@@ -29,7 +30,7 @@ function fmt(n) {
 
 function Section({ children, className = '' }) {
   return (
-    <section className={`card p-6 md:p-7 ${className}`}>
+    <section className={`card p-6 md:p-7 min-w-0 ${className}`}>
       {children}
     </section>
   )
@@ -66,6 +67,7 @@ export default function ReportView({ data, filename, banner = null, actions = nu
   const activeSearches  = chrome_searches?.length > 0 ? chrome_searches : top_searches
 
   const year = summary.date_range?.start?.slice(0, 4) || new Date().getFullYear()
+  useDocumentTitle(shared ? `A shared ${year} Wrapped` : `Your ${year} Wrapped`)
 
   const hoursVal   = summary.total_hours_browsed > 0 ? `${summary.total_hours_browsed}h` : fmt(summary.unique_domains)
   const hoursLabel = summary.total_hours_browsed > 0 ? 'Hours browsed' : 'Sites explored'
@@ -79,7 +81,7 @@ export default function ReportView({ data, filename, banner = null, actions = nu
 
       {/* ── Page header ── */}
       <header style={{ borderBottom: '1px solid var(--border)', position: 'sticky', top: 0, zIndex: 50, backdropFilter: 'blur(12px)', background: 'rgba(6,6,14,0.85)' }}>
-        <div style={{ maxWidth: 980, margin: '0 auto', padding: '12px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ maxWidth: 980, margin: '0 auto', padding: '12px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
           <Link
             to="/"
             style={{ fontSize: 13, color: 'var(--muted)', textDecoration: 'none', transition: 'color 0.15s' }}
@@ -91,7 +93,8 @@ export default function ReportView({ data, filename, banner = null, actions = nu
           <span className="mono" style={{ fontSize: 10, letterSpacing: '0.3em', color: 'var(--muted)', textTransform: 'uppercase' }}>
             BrowseWrapped
           </span>
-          <span className="mono" style={{ fontSize: 11, color: 'var(--muted)' }}>
+          {/* Entry count is secondary; hidden on phones so the header never overflows. */}
+          <span className="mono hidden sm:inline" style={{ fontSize: 11, color: 'var(--muted)' }}>
             {meta?.total_entries_parsed?.toLocaleString()} entries
             {shared ? ' · shared' : meta?.source === 'chrome_direct' ? ' · Chrome' : meta?.source === 'sample' ? ' · sample' : ' · upload'}
           </span>
@@ -105,7 +108,7 @@ export default function ReportView({ data, filename, banner = null, actions = nu
           style={{ background: 'rgba(168,85,247,0.1)', borderBottom: '1px solid rgba(168,85,247,0.25)', padding: '10px 20px', textAlign: 'center', fontSize: 13, color: 'var(--text)' }}
         >
           You&apos;re viewing <strong>synthetic sample data</strong>.{' '}
-          <Link to="/" style={{ color: 'var(--accent)' }}>Upload your own history</Link> to see your real Wrapped.
+          <Link to="/" style={{ color: 'var(--accent-text)', textDecoration: 'underline' }}>Upload your own history</Link> to see your real Wrapped.
         </div>
       )}
 
@@ -145,13 +148,13 @@ export default function ReportView({ data, filename, banner = null, actions = nu
       </div>
 
       {/* ── Main content ── */}
-      <main style={{ maxWidth: 980, margin: '0 auto', padding: '32px 20px 0', display: 'flex', flexDirection: 'column', gap: 20 }}>
+      <main id="main" tabIndex={-1} style={{ maxWidth: 980, margin: '0 auto', padding: '32px 20px 0', display: 'flex', flexDirection: 'column', gap: 20, outline: 'none' }}>
 
         {/* ─ Persona ─ */}
         {persona && <PersonaCard persona={persona} report={data} />}
 
         {/* ─ Stat cards ─ */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 14 }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2" style={{ gap: 14 }}>
           <StatCard label="Total visits"  value={fmt(summary.total_visits)} color="#a855f7" />
           <StatCard label={hoursLabel}    value={hoursVal}   color={hoursColor} />
           <StatCard
@@ -196,7 +199,7 @@ export default function ReportView({ data, filename, banner = null, actions = nu
         )}
 
         {/* ─ Topics + Domains ─ */}
-        <div style={{ display: 'grid', gridTemplateColumns: hasDomains ? '1fr 1fr' : '1fr', gap: 20 }}>
+        <div className={`grid grid-cols-1 ${hasDomains ? 'md:grid-cols-2' : ''}`} style={{ gap: 20 }}>
           <Section>
             <SectionHeader label="Breakdown" title="What You Explored" />
             <TopicsDonut topics={topics} />
@@ -235,7 +238,7 @@ export default function ReportView({ data, filename, banner = null, actions = nu
 
         {/* ─ Daily + Weekly ─ */}
         {hasTimestamps && (
-          <div style={{ display: 'grid', gridTemplateColumns: hasWeekly ? '3fr 2fr' : '1fr', gap: 20 }}>
+          <div className={`grid grid-cols-1 ${hasWeekly ? 'md:grid-cols-[3fr_2fr]' : ''}`} style={{ gap: 20 }}>
             <Section>
               <SectionHeader label="Daily Pattern" title="When You Browse" description="Hourly activity" />
               <DailyPattern data={daily_pattern} />
@@ -336,7 +339,7 @@ export default function ReportView({ data, filename, banner = null, actions = nu
           </section>
         )}
 
-        <p className="mono" style={{ textAlign: 'center', fontSize: 10, color: 'rgba(82,82,110,0.5)', paddingTop: 8, letterSpacing: '0.06em' }}>
+        <p className="mono" style={{ textAlign: 'center', fontSize: 10, color: 'var(--muted)', paddingTop: 8, letterSpacing: '0.06em' }}>
           {shared
             ? 'Shared reports contain aggregated stats only — no URLs, page titles, searches or site names.'
             : meta?.analysis_id

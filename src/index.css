@@ -10,9 +10,10 @@
   --border:     rgba(255,255,255,0.07);
   --border-hi:  rgba(255,255,255,0.13);
   --text:       #eaeaf4;
-  --muted:      #52526e;
+  --muted:      #8b8ba7;   /* 5.5:1+ on every surface (WCAG AA) */
   --accent:     #a855f7;
   --accent-2:   #f472b6;
+  --accent-text: #c084fc;  /* accent for text on tinted surfaces (7:1) */
   --accent-glow: rgba(168,85,247,0.22);
 
   --font-display: 'Space Grotesk', system-ui, sans-serif;
@@ -68,6 +69,30 @@ body {
   from { transform: translateY(0); }
   to   { transform: translateY(calc(-100vh - 60px)); }
 }
+
+/* ── Focus & skip link ─────────────────────────────── */
+/* One visible focus ring for every interactive element (keyboard only). */
+:focus-visible {
+  outline: 2px solid #c084fc;
+  outline-offset: 3px;
+}
+
+.skip-link {
+  position: absolute;
+  left: 16px;
+  top: -100px;
+  z-index: 100;
+  padding: 10px 16px;
+  border-radius: 10px;
+  background: var(--surface-2);
+  color: var(--text);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none;
+  border: 1px solid #c084fc;
+}
+.skip-link:focus-visible { top: 12px; }
 
 /* ── Cards ──────────────────────────────────────────── */
 .card {
@@ -126,6 +151,7 @@ body {
   cursor: pointer;
 }
 .drop-zone:hover,
+.drop-zone:focus-within,
 .drop-zone.dragging {
   border-color: var(--accent);
   background: rgba(168,85,247,0.06);

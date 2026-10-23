@@ -11,9 +11,9 @@ export default function StatusScreen({ children }) {
       >
         BrowseWrapped
       </Link>
-      <div className="card p-10 w-full max-w-md flex flex-col items-center gap-5 text-center">
+      <main id="main" tabIndex={-1} className="card p-10 w-full max-w-md flex flex-col items-center gap-5 text-center" style={{ outline: 'none' }}>
         {children}
-      </div>
+      </main>
     </div>
   )
 }

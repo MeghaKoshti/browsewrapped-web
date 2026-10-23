@@ -3,10 +3,12 @@ import UploadPage from './pages/UploadPage'
 import ResultsPage from './pages/ResultsPage'
 import AnalysisPage from './pages/AnalysisPage'
 import SharedReportPage from './pages/SharedReportPage'
+import SkipLink from './components/ui/SkipLink'
 
 export default function App() {
   return (
     <BrowserRouter>
+      <SkipLink />
       <Routes>
         <Route path="/" element={<UploadPage />} />
         <Route path="/results" element={<ResultsPage />} />

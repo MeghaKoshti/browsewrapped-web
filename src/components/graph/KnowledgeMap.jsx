@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import * as d3 from 'd3'
+import { summarizeKnowledgeMap } from '../../lib/chartSummaries'
 
 export default function KnowledgeMap({ nodes, edges }) {
   const ref = useRef(null)
@@ -128,6 +129,8 @@ export default function KnowledgeMap({ nodes, edges }) {
     <svg
       ref={ref}
       className="knowledge-graph-svg"
+      role="img"
+      aria-label={summarizeKnowledgeMap(nodes)}
       style={{ display: 'block', width: '100%', height: 500 }}
     />
   )

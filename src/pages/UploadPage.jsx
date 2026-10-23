@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { createAnalysis, analyzeChrome, fetchSampleReport } from '../api/client'
 import { errorMessage } from '../api/errorMessage'
 import UrlStream from '../components/ui/UrlStream'
+import useDocumentTitle from '../hooks/useDocumentTitle'
 
 const MAX_BYTES = 100 * 1024 * 1024
 
@@ -14,6 +15,7 @@ export default function UploadPage() {
   const [error, setError] = useState('')
   const inputRef = useRef(null)
   const navigate = useNavigate()
+  useDocumentTitle('Your year in tabs')
 
   const onSuccess = useCallback((data, filename) => {
     navigate('/results', { state: { data, filename } })
@@ -83,7 +85,7 @@ export default function UploadPage() {
       <UrlStream />
 
       {/* Content */}
-      <div className="relative z-10 w-full max-w-xl">
+      <main id="main" tabIndex={-1} className="relative z-10 w-full max-w-xl" style={{ outline: 'none' }}>
 
         {/* Brand wordmark */}
         <p className="mono text-center mb-12" style={{ fontSize: 10, letterSpacing: '0.3em', color: 'var(--muted)', textTransform: 'uppercase' }}>
@@ -157,14 +159,16 @@ export default function UploadPage() {
               className="w-full"
               style={{
                 display: 'flex',
+                flexWrap: 'wrap',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: 10,
+                gap: '4px 10px',
                 padding: '16px 24px',
                 marginBottom: 14,
                 borderRadius: 18,
                 border: 'none',
-                background: 'linear-gradient(90deg, #a855f7, #f472b6)',
+                // Darker stops than the brand gradient so white text stays ≥ 4.5:1.
+                background: 'linear-gradient(90deg, #9333ea, #db2777)',
                 color: 'white',
                 cursor: 'pointer',
                 fontFamily: 'var(--font-display)',
@@ -173,9 +177,8 @@ export default function UploadPage() {
                 boxShadow: '0 8px 30px rgba(168,85,247,0.35)',
               }}
             >
-              <span aria-hidden="true">✨</span>
-              Try with sample data
-              <span style={{ fontSize: 12, fontWeight: 500, opacity: 0.85 }}>· no upload needed</span>
+              <span style={{ whiteSpace: 'nowrap' }}><span aria-hidden="true">✨</span> Try with sample data</span>
+              <span style={{ fontSize: 12, fontWeight: 500, whiteSpace: 'nowrap' }}>No upload needed</span>
             </button>
 
             {/* ── Chrome primary CTA ── */}
@@ -195,7 +198,7 @@ export default function UploadPage() {
                 color: 'var(--text)',
               }}
             >
-              <span style={{ fontSize: 32, flexShrink: 0, lineHeight: 1 }}>🌐</span>
+              <span style={{ fontSize: 32, flexShrink: 0, lineHeight: 1 }} aria-hidden="true">🌐</span>
               <div style={{ flex: 1, minWidth: 0 }}>
                 <p style={{ fontFamily: 'var(--font-display)', fontSize: 18, fontWeight: 700, color: 'white', lineHeight: 1.2, margin: 0 }}>
                   Import from Chrome
@@ -204,7 +207,7 @@ export default function UploadPage() {
                   Reads your local Chrome database — instant, no export needed
                 </p>
               </div>
-              <span style={{ color: 'var(--accent)', fontSize: 22, flexShrink: 0, fontWeight: 300 }}>→</span>
+              <span style={{ color: 'var(--accent)', fontSize: 22, flexShrink: 0, fontWeight: 300 }} aria-hidden="true">→</span>
             </button>
 
             {/* Divider */}
@@ -225,12 +228,12 @@ export default function UploadPage() {
               onDragLeave={() => setDragging(false)}
               onClick={() => inputRef.current?.click()}
             >
-              <span style={{ fontSize: 26 }}>📂</span>
+              <span style={{ fontSize: 26 }} aria-hidden="true">📂</span>
               <div>
                 <p style={{ fontFamily: 'var(--font-display)', fontWeight: 600, color: 'var(--text)', margin: 0 }}>
                   {dragging ? 'Drop it here' : 'Drop your export file'}
                 </p>
-                <p className="mono" style={{ fontSize: 11, color: 'var(--muted)', marginTop: 4, letterSpacing: '0.06em' }}>
+                <p id="drop-zone-formats" className="mono" style={{ fontSize: 11, color: 'var(--muted)', marginTop: 4, letterSpacing: '0.06em' }}>
                   JSON · CSV
                 </p>
               </div>
@@ -242,19 +245,21 @@ export default function UploadPage() {
                   borderRadius: 100,
                   border: '1px solid rgba(168,85,247,0.45)',
                   background: 'rgba(168,85,247,0.1)',
-                  color: 'var(--accent)',
+                  color: 'var(--accent-text)',
                   fontSize: 13,
                   fontFamily: 'var(--font-display)',
                   fontWeight: 600,
                   cursor: 'pointer',
                   transition: 'all 0.15s',
                 }}
+                // The keyboard way into the drop zone: Tab here, Enter opens the file picker.
+                aria-describedby="drop-zone-formats"
                 onClick={(e) => { e.stopPropagation(); inputRef.current?.click() }}
               >
-                Choose File
+                Choose file
               </button>
               <input
-                ref={inputRef} type="file" accept=".json,.csv" className="hidden"
+                ref={inputRef} type="file" accept=".json,.csv" className="hidden" aria-label="Browser history file (JSON or CSV)"
                 onChange={(e) => handleFile(e.target.files[0])}
               />
             </div>
@@ -276,12 +281,13 @@ export default function UploadPage() {
 
         {/* Error */}
         {state === 'error' && (
-          <div style={{
+          <div role="alert" style={{
             marginTop: 14, padding: '12px 16px', borderRadius: 12, textAlign: 'center',
             background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)',
           }}>
             <p style={{ fontSize: 13, color: '#fca5a5', margin: 0 }}>{error}</p>
             <button
+              type="button"
               style={{ marginTop: 8, fontSize: 12, color: 'var(--muted)', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}
               onClick={() => setState('idle')}
             >
@@ -289,7 +295,7 @@ export default function UploadPage() {
             </button>
           </div>
         )}
-      </div>
+      </main>
 
       <style>{`
         @keyframes rotate { to { transform: rotate(360deg); } }

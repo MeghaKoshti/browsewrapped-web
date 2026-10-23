@@ -5,6 +5,7 @@ import { getSharedReport, deleteShareLink } from '../api/client'
 import { loadDeleteToken, forgetDeleteToken } from '../lib/shareTokens'
 import ReportView from '../components/report/ReportView'
 import StatusScreen, { Spinner } from '../components/report/StatusScreen'
+import useDocumentTitle from '../hooks/useDocumentTitle'
 
 // /r/:token — a public, read-only shared report.
 export default function SharedReportPage() {
@@ -27,6 +28,8 @@ export default function SharedReportPage() {
       })
     return () => controller.abort()
   }, [token])
+
+  useDocumentTitle(error ? 'Shared report unavailable' : shared ? null : 'Loading shared report')
 
   const removeLink = async () => {
     if (!deleteToken) return
@@ -51,7 +54,7 @@ export default function SharedReportPage() {
           onClick={() => navigate('/')}
           style={{
             padding: '10px 24px', borderRadius: 100, border: '1px solid rgba(168,85,247,0.45)',
-            background: 'rgba(168,85,247,0.1)', color: 'var(--accent)', fontFamily: 'var(--font-display)',
+            background: 'rgba(168,85,247,0.1)', color: 'var(--accent-text)', fontFamily: 'var(--font-display)',
             fontWeight: 600, fontSize: 14, cursor: 'pointer',
           }}
         >
