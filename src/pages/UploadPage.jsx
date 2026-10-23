@@ -1,6 +1,7 @@
 import { useState, useRef, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { createAnalysis, analyzeChrome, fetchSampleReport } from '../api/client'
+import { errorMessage } from '../api/errorMessage'
 import UrlStream from '../components/ui/UrlStream'
 
 const MAX_BYTES = 100 * 1024 * 1024
@@ -40,7 +41,7 @@ export default function UploadPage() {
         state: { filename: file.name, data: analysis.status === 'completed' ? analysis.result : null },
       })
     } catch (err) {
-      onError(err.response?.data?.error || err.message || 'Something went wrong')
+      onError(errorMessage(err, 'Something went wrong'))
     }
   }, [navigate, onError])
 
@@ -52,7 +53,7 @@ export default function UploadPage() {
       const data = await analyzeChrome()
       onSuccess(data, 'Chrome History')
     } catch (err) {
-      onError(err.response?.data?.error || err.message || 'Could not read Chrome history')
+      onError(errorMessage(err, 'Could not read Chrome history'))
     }
   }, [onSuccess, onError])
 
@@ -64,7 +65,7 @@ export default function UploadPage() {
       const data = await fetchSampleReport()
       onSuccess(data, 'Sample data')
     } catch (err) {
-      onError(err.response?.data?.error || err.message || 'Could not load the sample report')
+      onError(errorMessage(err, 'Could not load the sample report'))
     }
   }, [onSuccess, onError])
 
