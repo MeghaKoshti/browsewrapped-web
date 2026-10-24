@@ -46,7 +46,8 @@ function Section({ children, className = '' }) {
 //   banner  – optional element shown under the header (e.g. "shared report" note)
 //   actions – optional element shown in the hero (e.g. the Share button)
 //   shared  – true on public /r/:token pages (read-only wording)
-export default function ReportView({ data, filename, banner = null, actions = null, shared = false }) {
+//   stored  – true when the report is an upload kept on the server (/analyses/:id)
+export default function ReportView({ data, filename, banner = null, actions = null, shared = false, stored = false }) {
   const {
     summary, persona, topics, time_by_topic, daily_pattern, weekly_pattern,
     monthly_trends, heatmap, activity_calendar, sessions, streaks, topic_momentum,
@@ -348,8 +349,8 @@ export default function ReportView({ data, filename, banner = null, actions = nu
         <p className="mono" style={{ textAlign: 'center', fontSize: 10, color: 'var(--muted)', paddingTop: 8, letterSpacing: '0.06em' }}>
           {shared
             ? 'Shared reports contain aggregated stats only — no URLs, page titles, searches or site names.'
-            : meta?.analysis_id
-              ? 'Your upload is analysed on the BrowseWrapped server and deleted after 7 days. Share links only include aggregated stats.'
+            : stored
+              ? 'This report, including your top pages and searches, is kept on the BrowseWrapped server for 7 days after upload, then deleted. Share links only include aggregated stats.'
               : 'Share links only include aggregated stats — no URLs, page titles, searches or site names.'}
         </p>
       </main>

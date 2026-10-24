@@ -63,10 +63,6 @@ export default function ExportGuide({ initialBrowser = 'chrome', os = null }) {
         {browser.methods.map((m) => <Method key={m.title} method={m} os={os} />)}
       </div>
 
-      <p style={{ fontSize: 12, color: 'var(--muted)', lineHeight: 1.6, margin: '18px 4px 0', paddingTop: 14, borderTop: '1px solid var(--border)' }}>
-        <strong style={{ color: 'var(--text)', fontWeight: 600 }}>Your privacy:</strong> your file is analysed on the BrowseWrapped
-        server and deleted after 7 days. Share links only include totals and topics, never URLs, page titles or searches.
-      </p>
     </section>
   )
 }

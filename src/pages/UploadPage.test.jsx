@@ -20,9 +20,9 @@ function ResultsProbe() {
   return <p>results for {state?.filename} ({state?.data?.summary?.total_visits} visits)</p>
 }
 
-function renderUpload() {
+function renderUpload(entry = '/') {
   return render(
-    <MemoryRouter initialEntries={['/']}>
+    <MemoryRouter initialEntries={[entry]}>
       <Routes>
         <Route path="/" element={<UploadPage />} />
         <Route path="/results" element={<ResultsProbe />} />
@@ -130,5 +130,27 @@ describe('UploadPage', () => {
 
     expect(screen.getByRole('tab', { selected: true })).toHaveTextContent('Firefox')
     expect(screen.getAllByRole('button', { name: /^Copy .* path$/ })[0]).toHaveAccessibleName('Copy Linux path')
+  })
+  it('keeps the upload’s delete token for this tab so the report can be deleted', async () => {
+    vi.mocked(createAnalysis).mockResolvedValue({ id: 9, status: 'pending', delete_token: 'one-time-delete-token' })
+    const { container } = renderUpload()
+
+    await userEvent.upload(container.querySelector('input[type="file"]'), new File(['{}'], 'history.json'))
+
+    expect(JSON.parse(sessionStorage.getItem('bw.deleteTokens'))).toEqual({ 9: 'one-time-delete-token' })
+    sessionStorage.clear()
+  })
+
+  it('says exactly what is kept, and for how long', () => {
+    renderUpload()
+    const privacy = screen.getByRole('region', { name: 'What happens to your file' })
+    expect(privacy).toHaveTextContent('kept for 7 days')
+    expect(privacy).toHaveTextContent('top pages (address and title) and top searches')
+    expect(privacy).toHaveTextContent('Delete this report now')
+  })
+
+  it('shows a confirmation passed from the previous page', () => {
+    renderUpload({ pathname: '/', state: { notice: 'Your report was deleted from our server.' } })
+    expect(screen.getByRole('status')).toHaveTextContent('Your report was deleted from our server.')
   })
 })

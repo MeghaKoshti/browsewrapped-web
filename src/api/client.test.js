@@ -58,4 +58,35 @@ describe('API client requests', () => {
     const client = await import('./client')
     expect(await requestedUrl(() => client.getSharedReport('tok'))).toBe('https://browsewrapped-api.fly.dev/api/v1/shared_reports/tok')
   })
+  // Records the method, URL, headers and body axios sends, and answers with
+  // `response` (status + JSON) so the call resolves.
+  async function captured(call, response = { status: 204, body: '' }) {
+    const request = { headers: {} }
+    vi.spyOn(XMLHttpRequest.prototype, 'open').mockImplementation(function (method, url) {
+      Object.assign(request, { method, url })
+    })
+    vi.spyOn(XMLHttpRequest.prototype, 'setRequestHeader').mockImplementation(function (name, value) {
+      request.headers[name] = value
+    })
+    vi.spyOn(XMLHttpRequest.prototype, 'send').mockImplementation(function (body) {
+      request.body = body
+      Object.defineProperty(this, 'readyState', { value: 4 })
+      Object.defineProperty(this, 'status', { value: response.status })
+      Object.defineProperty(this, 'responseText', { value: response.body })
+      Object.defineProperty(this, 'response', { value: response.body })
+      Object.defineProperty(this, 'getAllResponseHeaders', { value: () => 'content-type: application/json' })
+      queueMicrotask(() => this.onloadend ? this.onloadend() : this.onreadystatechange?.())
+    })
+    const result = await call()
+    return { request, result }
+  }
+
+  it('deletes an analysis with its delete token in the X-Delete-Token header', async () => {
+    vi.stubEnv('VITE_API_URL', '')
+    const client = await import('./client')
+    const { request } = await captured(() => client.deleteAnalysis('42', 'secret-token'))
+    expect(request.method).toBe('DELETE')
+    expect(request.url).toBe('/api/v1/analyses/42')
+    expect(request.headers['X-Delete-Token']).toBe('secret-token')
+  })
 })

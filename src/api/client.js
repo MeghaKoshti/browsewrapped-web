@@ -62,6 +62,12 @@ export async function getAnalysis(id, { signal } = {}) {
   return data
 }
 
+// Deletes a stored analysis right away. The delete token came back once,
+// with the upload response, and proves this browser made the upload.
+export async function deleteAnalysis(id, deleteToken) {
+  await http.delete(`/v1/analyses/${id}`, { headers: { 'X-Delete-Token': deleteToken } })
+}
+
 // Creates a public share link. Pass analysisId for stored analyses, or the
 // report itself (sample data, Chrome import). The API strips private fields.
 export async function createShareLink({ analysisId, report }) {

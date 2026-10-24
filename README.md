@@ -35,11 +35,22 @@ This repo is the **React frontend**. The analysis happens in the Rails API: [bro
 - **Then vs now:** your latest 30 days against the 30 before (visits, active days, hours and topics), with a text summary and table view of the chart
 - **Knowledge map:** an interactive graph of topic clusters (drag to explore)
 - **Large files:** big uploads are analysed in the background; `/analyses/:id` shows a processing screen and polls until the report is ready
+- **Delete my data now:** the report page has a "Delete this report now" button that removes the stored analysis from the API straight away (it uses the one-time delete token from the upload, kept in `sessionStorage` for that tab)
 - **Share links:** "Share my report" creates a public `/r/:token` page with aggregated stats only (no URLs, titles, searches or site names), which you can delete at any time
 - **Accessible and responsive:** works from 375 px phones up, keyboard friendly (skip link, visible focus), WCAG AA contrast, and every chart has a text alternative
 - **Friendly errors:** unsupported or empty files, databases that aren't browser history or were copied half-written, oversized uploads and rate limits (with the real wait from `Retry-After`) get a plain-English message instead of a crash
 - **Ready to deploy:** Vercel config with SPA rewrites, a strict Content Security Policy and security headers; the API URL comes from `VITE_API_URL`, and report pages and charts load as separate chunks
 - **Tested:** Vitest + React Testing Library suite (pages, period comparison, persona image, error copy, skip link), run with lint and the build in CI
+
+## Privacy
+
+What the upload page tells visitors, and what actually happens:
+
+- **The uploaded file** is read on the API server and deleted as soon as it has been analysed.
+- **The report** (totals, topics, top sites, top pages with address and title, and top searches) is kept for **7 days** so the visitor can reopen `/analyses/:id`, then a daily job deletes it.
+- **Delete now:** the upload response carries a one-time `delete_token`. The web app keeps it in `sessionStorage` (`bw.deleteTokens`, a map of analysis id to token) and sends it as `X-Delete-Token` to `DELETE /api/v1/analyses/:id`. Only the tab that uploaded the file can delete it early.
+- **AI categorisation:** up to 50 domain names the rules don't recognise (for example `example.com`) may be sent to Google Gemini. Never full URLs, page titles or searches.
+- **Share links** contain aggregated stats and topics only and expire after 30 days.
 
 ## Tech stack
 

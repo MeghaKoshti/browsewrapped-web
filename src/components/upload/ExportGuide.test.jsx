@@ -92,9 +92,4 @@ describe('ExportGuide', () => {
     expect(writeText).toHaveBeenCalledWith('~/Library/Application Support/Microsoft Edge/Default/History')
     expect(screen.getByRole('button', { name: 'Copy macOS path' })).toHaveTextContent('Copied')
   })
-
-  it('includes a privacy note', () => {
-    render(<ExportGuide />)
-    expect(screen.getByText(/deleted after 7 days/)).toBeInTheDocument()
-  })
 })

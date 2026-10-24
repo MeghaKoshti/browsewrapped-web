@@ -1,11 +1,13 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { createAnalysis, analyzeChrome, fetchSampleReport, canImportLocalChrome } from '../api/client'
 import { errorMessage } from '../api/errorMessage'
 import UrlStream from '../components/ui/UrlStream'
 import ExportGuide from '../components/upload/ExportGuide'
 import { detectBrowser, detectOS } from '../lib/exportGuide'
 import useDocumentTitle from '../hooks/useDocumentTitle'
+import { saveAnalysisDeleteToken } from '../lib/deleteTokens'
+import UploadPrivacy from '../components/upload/UploadPrivacy'
 
 const MAX_BYTES = 100 * 1024 * 1024
 
@@ -18,6 +20,8 @@ export default function UploadPage() {
   const inputRef = useRef(null)
   const errorRef = useRef(null)
   const navigate = useNavigate()
+  // One-off message from the previous page, e.g. "Your report was deleted".
+  const notice = useLocation().state?.notice
   useDocumentTitle('Your year in tabs')
   const [guide] = useState(() => ({ browser: detectBrowser(navigator.userAgent), os: detectOS(navigator.userAgent) }))
 
@@ -47,6 +51,7 @@ export default function UploadPage() {
         setProgress(p)
         if (p === 100) setLoadingMsg('Analyzing patterns…')
       })
+      saveAnalysisDeleteToken(analysis.id, analysis.delete_token)
       // Completed analyses carry their result, so the next page can render it
       // straight away; pending ones are polled there.
       navigate(`/analyses/${analysis.id}`, {
@@ -116,6 +121,15 @@ export default function UploadPage() {
             Every click. Every rabbit hole. Finally visualized.
           </p>
         </div>
+
+        {notice && (
+          <p role="status" style={{
+            margin: '0 0 16px', padding: '12px 16px', borderRadius: 12, textAlign: 'center', fontSize: 13, color: 'var(--text)',
+            background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.3)',
+          }}>
+            <span aria-hidden="true">✓ </span>{notice}
+          </p>
+        )}
 
         {isLoading ? (
           /* Loading */
@@ -279,6 +293,7 @@ export default function UploadPage() {
               />
             </div>
 
+            <UploadPrivacy />
           </>
         )}
 

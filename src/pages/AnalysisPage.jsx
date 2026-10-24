@@ -5,6 +5,8 @@ import { getAnalysis } from '../api/client'
 import ReportView from '../components/report/ReportView'
 import ShareButton from '../components/report/ShareButton'
 import StatusScreen, { Spinner } from '../components/report/StatusScreen'
+import DeleteReportButton from '../components/report/DeleteReportButton'
+import { loadAnalysisDeleteToken } from '../lib/deleteTokens'
 import useDocumentTitle from '../hooks/useDocumentTitle'
 
 const POLL_INTERVAL_MS = 2000
@@ -28,6 +30,8 @@ export default function AnalysisPage() {
     initialResult ? { id, status: 'completed', result: initialResult } : { id, status: 'pending' },
   )
   const [loadError, setLoadError] = useState('')
+  // Only the browser tab that uploaded the file holds its delete token.
+  const [deleteToken] = useState(() => loadAnalysisDeleteToken(id))
 
   useEffect(() => {
     if (initialResult) return undefined
@@ -75,7 +79,13 @@ export default function AnalysisPage() {
   useDocumentTitle(completed ? null : failed ? 'Analysis failed' : 'Analyzing your history')
 
   if (completed) {
-    return <ReportView data={analysis.result} filename={filename} actions={<ShareButton analysisId={id} />} />
+    const actions = (
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
+        <ShareButton analysisId={id} />
+        <DeleteReportButton analysisId={id} deleteToken={deleteToken} />
+      </div>
+    )
+    return <ReportView data={analysis.result} filename={filename} actions={actions} stored />
   }
 
   if (failed) {
