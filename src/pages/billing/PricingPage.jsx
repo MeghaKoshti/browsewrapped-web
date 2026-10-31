@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { getPricing } from '../../api/client'
 import usePass from '../../pass/passContext'
 import GetPassForm from '../../components/pass/GetPassForm'
@@ -22,6 +22,12 @@ export default function PricingPage() {
   const [currency, setCurrency] = useState(browserCurrency)
   const [pricing, setPricing] = useState(null)
   const [loadError, setLoadError] = useState(false)
+  const { hash } = useLocation()
+
+  // "I already have one" links to /pricing#restore; the router doesn't scroll to hashes.
+  useEffect(() => {
+    if (hash === '#restore') document.getElementById('restore')?.scrollIntoView?.({ block: 'start' })
+  }, [hash])
 
   useEffect(() => {
     const controller = new AbortController()
@@ -115,7 +121,7 @@ export default function PricingPage() {
           Changed your mind? You get a full refund within 7 days. See the <Link to="/refund">Refund policy</Link>.
         </p>
 
-        {!pass.hasPass && <RestorePassForm />}
+        {!pass.hasPass && <RestorePassForm id="restore" />}
       </main>
     </div>
   )

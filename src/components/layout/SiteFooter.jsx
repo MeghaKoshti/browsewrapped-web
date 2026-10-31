@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import PassStatus from '../pass/PassStatus'
 
 const LINKS = [
   { to: '/pricing', label: 'Pricing' },
@@ -12,6 +13,7 @@ const LINKS = [
 export default function SiteFooter() {
   return (
     <footer className="site-footer">
+      <PassStatus />
       <nav aria-label="Footer">
         <ul>
           {LINKS.map((l) => <li key={l.to}><Link to={l.to}>{l.label}</Link></li>)}

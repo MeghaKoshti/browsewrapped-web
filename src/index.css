@@ -556,3 +556,27 @@ input[type="email"]::placeholder { color: #6b6b88; }
 .restore-sent { margin: 0; }
 /* Inside a status card the restore form sits flush with the card. */
 .card .restore { margin-top: 4px; padding: 18px 0 0; border: none; border-top: 1px solid var(--border); border-radius: 0; background: none; }
+
+/* ── Pass gate and status ───────────────────────────── */
+.pass-gate {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px 18px;
+  padding: 18px 20px;
+  border-radius: 16px;
+  border: 1px dashed rgba(168,85,247,0.45);
+  background: rgba(168,85,247,0.06);
+  text-align: left;
+}
+.pass-gate-lock { font-size: 22px; line-height: 1; }
+.pass-gate-text { flex: 1 1 220px; min-width: 0; }
+.pass-gate-title { margin: 0; font-family: var(--font-display); font-weight: 600; font-size: 15px; color: var(--text); }
+.pass-gate-body { margin: 4px 0 0; font-size: 13px; line-height: 1.5; color: var(--muted); }
+.pass-gate-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; }
+.pass-gate-compact { padding: 12px 14px; }
+.pass-gate-compact .btn-primary { min-height: 38px; padding: 6px 16px; font-size: 14px; }
+.pass-gate-loading { margin: 0; font-size: 13px; color: var(--muted); }
+.pass-status { margin: 0 0 12px; font-size: 12px; color: #6ee7b7; }
+.pass-status .text-button { font-size: 12px; color: var(--muted); }
+.pass-status-email { color: var(--muted); overflow-wrap: anywhere; }

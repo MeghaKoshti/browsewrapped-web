@@ -4,7 +4,7 @@ import { errorMessage } from '../../api/errorMessage'
 
 // "Restore my Pass": emails a single-use sign-in link. The API answers the
 // same way whether or not the email has a Pass, and so does this form.
-export default function RestorePassForm({ title = 'Restore my Pass', intro = 'Bought a Pass on another device? Enter the email you paid with and we’ll send you a sign-in link.' }) {
+export default function RestorePassForm({ id: anchor, title = 'Restore my Pass', intro = 'Bought a Pass on another device? Enter the email you paid with and we’ll send you a sign-in link.' }) {
   const id = useId()
   const [email, setEmail] = useState('')
   const [state, setState] = useState('idle') // idle | sending | sent | error
@@ -24,7 +24,7 @@ export default function RestorePassForm({ title = 'Restore my Pass', intro = 'Bo
   }
 
   return (
-    <section className="restore" aria-labelledby={`${id}-title`}>
+    <section id={anchor} className="restore" aria-labelledby={`${id}-title`}>
       <h2 id={`${id}-title`}>{title}</h2>
       {state === 'sent' ? (
         <p role="status" className="restore-sent">
