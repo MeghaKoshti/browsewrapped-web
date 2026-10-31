@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import axios from 'axios'
 import { getSharedReport, deleteShareLink } from '../api/client'
+import { withWakeRetry, WAKING_MESSAGE } from '../api/wake'
 import { loadDeleteToken, forgetDeleteToken } from '../lib/shareTokens'
 import ReportView from '../components/report/ReportView'
 import StatusScreen, { Spinner } from '../components/report/StatusScreen'
@@ -14,11 +15,14 @@ export default function SharedReportPage() {
   const [shared, setShared] = useState(null)
   const [error, setError]   = useState('')
   const [deleting, setDeleting] = useState(false)
+  const [waking, setWaking] = useState(false)
   const [deleteToken] = useState(() => loadDeleteToken(token))
 
   useEffect(() => {
     const controller = new AbortController()
-    getSharedReport(token, { signal: controller.signal })
+    // Shared links are often the first visit after the free API has gone to
+    // sleep, so give it time to wake up instead of failing straight away.
+    withWakeRetry(() => getSharedReport(token, { signal: controller.signal }), { onWaking: () => setWaking(true) })
       .then(setShared)
       .catch((err) => {
         if (axios.isCancel(err)) return
@@ -69,7 +73,7 @@ export default function SharedReportPage() {
       <StatusScreen>
         <Spinner />
         <p role="status" style={{ fontFamily: 'var(--font-display)', fontWeight: 600, color: 'var(--text)', margin: 0 }}>
-          Loading shared report…
+          {waking ? WAKING_MESSAGE : 'Loading shared report…'}
         </p>
       </StatusScreen>
     )
