@@ -58,9 +58,26 @@ describe('PassStatus', () => {
   })
 })
 
+describe('PassStatus after the session expired', () => {
+  it('offers "Restore my Pass"', () => {
+    renderWith({ ...NO_PASS, sessionExpired: true }, <PassStatus />)
+    expect(screen.getByText(/sign-in on this device has expired/)).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Restore my Pass' })).toHaveAttribute('href', '/pricing#restore')
+  })
+})
+
 describe('pass_required errors', () => {
   it('explain that a Pass is needed (402)', () => {
     expect(errorMessage({ response: { status: 402, data: { error: { code: 'pass_required' } } } })).toMatch(/needs a Wrapped Pass/)
     expect(errorMessage({ response: { status: 402, data: {} } })).toMatch(/needs a Wrapped Pass/)
+  })
+
+  it('cover the other billing and sign-in error codes', () => {
+    const err = (status, code) => ({ response: { status, data: { error: { code, message: 'raw' } } } })
+    expect(errorMessage(err(503, 'checkout_unavailable'))).toMatch(/Nothing was charged/)
+    expect(errorMessage(err(422, 'invalid_currency'))).toMatch(/currency isn’t available/)
+    expect(errorMessage(err(422, 'invalid_plan'))).toMatch(/plan isn’t available/)
+    expect(errorMessage(err(401, 'invalid_or_expired_token'))).toMatch(/expired or was already used/)
+    expect(errorMessage({ response: { status: 429, headers: { 'retry-after': '120' }, data: {} } })).toBe('Too many requests right now. Please wait 2 minutes and try again.')
   })
 })

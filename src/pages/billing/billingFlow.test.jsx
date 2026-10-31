@@ -137,7 +137,7 @@ describe('/auth/verify', () => {
     vi.mocked(verifyMagicLink).mockRejectedValue({ response: { status: 401, data: { error: { code: 'invalid_or_expired_token' } } } })
     renderAt('/auth/verify?token=verify-2')
 
-    expect(await screen.findByRole('heading', { name: 'This link has expired' })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'This link has expired or was already used' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Email me a sign-in link' })).toBeInTheDocument()
     expect(localStorage.getItem('bw.passToken')).toBeNull()
   })

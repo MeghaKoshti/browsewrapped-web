@@ -48,6 +48,7 @@ describe('usePass / PassProvider', () => {
 
     expect(await screen.findByText('status: none')).toBeInTheDocument()
     expect(localStorage.getItem('bw.passToken')).toBeNull()
+    expect(seen.pass.sessionExpired).toBe(true)
   })
 
   it('signs in with an email link token once, even when asked twice', async () => {

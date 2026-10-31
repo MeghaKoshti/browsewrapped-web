@@ -9,6 +9,9 @@ const FRIENDLY = {
   unsupported_sqlite: 'That database isn’t a browser history file. Upload History from Chrome or Edge, places.sqlite from Firefox, or History.db from Safari.',
   pass_required: 'This needs a Wrapped Pass. Get one on the Pricing page, or restore yours with the email you paid with.',
   invalid_email: 'Enter a valid email address, like name@example.com.',
+  invalid_currency: 'That currency isn’t available. Refresh the pricing page and try again.',
+  invalid_plan: 'That plan isn’t available. Refresh the pricing page and try again.',
+  invalid_or_expired_token: 'This sign-in link has expired or was already used. Request a new one.',
   checkout_unavailable: 'Checkout isn’t available right now. Nothing was charged. Please try again in a few minutes.',
   corrupt_sqlite: 'That history file looks incomplete. This usually happens when it’s copied while the browser is open. Quit the browser, copy the file again and upload the new copy.',
 }

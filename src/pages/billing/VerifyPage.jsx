@@ -38,8 +38,8 @@ export default function VerifyPage() {
     return (
       <StatusScreen>
         <span className="status-emoji" aria-hidden="true">🔗</span>
-        <h1 className="status-title">This link has expired</h1>
-        <p className="status-body">Sign-in links work once, for 15 minutes. Send yourself a new one.</p>
+        <h1 className="status-title">This link has expired or was already used</h1>
+        <p className="status-body">Sign-in links work once, for 15 minutes. Request a new one below.</p>
         <RestorePassForm title="Send a new link" intro="Enter the email you paid with." />
       </StatusScreen>
     )

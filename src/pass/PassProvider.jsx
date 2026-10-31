@@ -19,9 +19,10 @@ async function checkPass(token, signal, setPass) {
   } catch (err) {
     if (signal?.aborted) return null
     if (err?.response?.status === 401) {
-      // Expired or revoked session: forget it so we stop sending it.
+      // Expired or revoked session: forget it so we stop sending it, and
+      // let the footer offer "Restore my Pass".
       clearPassToken()
-      setPass(SIGNED_OUT)
+      setPass({ ...SIGNED_OUT, sessionExpired: true })
       return null
     }
     setPass((current) => (current.status === 'loading' ? { ...SIGNED_OUT, status: 'error' } : current))
