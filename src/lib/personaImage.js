@@ -7,13 +7,15 @@
 //   drawPersonaCard      – draws onto any 2D context, so tests can pass a fake
 //   renderPersonaCardPng – creates the canvas and encodes a PNG (browser only)
 
+import { siteDomain } from './site'
+
 export const CARD_WIDTH = 1080
 export const CARD_HEIGHT = 1350
 
-const DISPLAY_FONT = '"Space Grotesk", system-ui, sans-serif'
-const MONO_FONT = '"DM Mono", "Courier New", monospace'
+export const DISPLAY_FONT = '"Space Grotesk", system-ui, sans-serif'
+export const MONO_FONT = '"DM Mono", "Courier New", monospace'
 
-function compact(n) {
+export function compact(n) {
   if (n == null) return '—'
   if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`
   if (n >= 10_000) return `${Math.round(n / 1000)}k`
@@ -21,7 +23,7 @@ function compact(n) {
   return n.toLocaleString('en-US')
 }
 
-function formatDay(iso) {
+export function formatDay(iso) {
   const date = new Date(`${iso}T00:00:00Z`)
   if (Number.isNaN(date.getTime())) return iso
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' })
@@ -29,7 +31,8 @@ function formatDay(iso) {
 
 // Only aggregated, non-identifying data goes on the card: the persona, topic
 // shares and totals. Never domains, URLs, page titles or searches.
-export function buildPersonaCardData(report) {
+//   site – the domain printed in the footer (from VITE_PUBLIC_URL)
+export function buildPersonaCardData(report, { site = siteDomain() } = {}) {
   const { persona, summary = {}, topics = [], streaks } = report || {}
   if (!persona?.title) return null
 
@@ -47,6 +50,7 @@ export function buildPersonaCardData(report) {
     color: /^#[0-9a-f]{6}$/i.test(persona.color || '') ? persona.color : '#a855f7',
     year: range?.start?.slice(0, 4) || String(new Date().getFullYear()),
     dateRange: range?.start && range?.end ? `${formatDay(range.start)} – ${formatDay(range.end)}` : '',
+    site,
     stats,
     topTopics: topics.slice(0, 4).map((t) => ({ name: t.name, percentage: t.percentage, color: t.color || '#a855f7' })),
   }
@@ -82,12 +86,12 @@ export function wrapText(text, maxWidth, measure, maxLines = Infinity) {
   return kept
 }
 
-function hexToRgba(hex, alpha) {
+export function hexToRgba(hex, alpha) {
   const n = parseInt(hex.slice(1), 16)
   return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${alpha})`
 }
 
-function roundRect(ctx, x, y, w, h, r) {
+export function roundRect(ctx, x, y, w, h, r) {
   ctx.beginPath()
   ctx.moveTo(x + r, y)
   ctx.arcTo(x + w, y, x + w, y + h, r)
@@ -200,36 +204,50 @@ export function drawPersonaCard(ctx, data) {
     ctx.textAlign = 'left'
   }
 
-  // Footer: hairline + date range
+  // Footer: hairline, date range and the site address (the watermark)
   ctx.fillStyle = 'rgba(255,255,255,0.08)'
   ctx.fillRect(PAD, H - 110, W - PAD * 2, 2)
   ctx.fillStyle = muted
   ctx.font = `400 22px ${MONO_FONT}`
   ctx.fillText(data.dateRange, PAD, H - 64)
+  if (data.site) {
+    ctx.textAlign = 'right'
+    ctx.fillStyle = text
+    ctx.font = `500 24px ${MONO_FONT}`
+    ctx.fillText(data.site, W - PAD, H - 64)
+    ctx.textAlign = 'left'
+  }
 }
 
-// Browser only: wait for the web fonts, draw, and encode to a PNG blob.
-export async function renderPersonaCardPng(data) {
+// Canvas text silently falls back to a system font if the web font is not
+// loaded yet, so load the exact faces the images use first.
+export async function loadCardFonts() {
+  if (!document.fonts?.load) return
+  await Promise.all([
+    document.fonts.load(`700 112px "Space Grotesk"`),
+    document.fonts.load(`600 40px "Space Grotesk"`),
+    document.fonts.load(`400 34px "Space Grotesk"`),
+    document.fonts.load(`500 26px "DM Mono"`),
+  ]).catch(() => {})
+}
+
+// Browser only: draws with `draw(ctx)` on a width×height canvas and encodes a PNG blob.
+export async function renderPng(width, height, draw) {
   const canvas = document.createElement('canvas')
-  canvas.width = CARD_WIDTH
-  canvas.height = CARD_HEIGHT
+  canvas.width = width
+  canvas.height = height
   const ctx = typeof canvas.getContext === 'function' ? canvas.getContext('2d') : null
   if (!ctx || typeof canvas.toBlob !== 'function') throw new Error('Canvas is not supported in this browser')
 
-  // Canvas text silently falls back to a system font if the web font is not
-  // loaded yet, so load the exact faces the card uses first.
-  if (document.fonts?.load) {
-    await Promise.all([
-      document.fonts.load(`700 112px "Space Grotesk"`),
-      document.fonts.load(`400 34px "Space Grotesk"`),
-      document.fonts.load(`500 26px "DM Mono"`),
-    ]).catch(() => {})
-  }
-
-  drawPersonaCard(ctx, data)
+  await loadCardFonts()
+  draw(ctx)
   return new Promise((resolve, reject) => {
     canvas.toBlob((blob) => (blob ? resolve(blob) : reject(new Error('Could not create the image'))), 'image/png')
   })
+}
+
+export function renderPersonaCardPng(data) {
+  return renderPng(CARD_WIDTH, CARD_HEIGHT, (ctx) => drawPersonaCard(ctx, data))
 }
 
 export function downloadBlob(blob, filename) {

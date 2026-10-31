@@ -38,6 +38,10 @@ describe('buildPersonaCardData', () => {
     expect(data.topTopics.map((t) => t.name)).toEqual(['Programming', 'AI & ML', 'Tech News', 'Entertainment'])
   })
 
+  it('carries the public site domain for the footer watermark', () => {
+    expect(buildPersonaCardData(report, { site: 'browsewrapped.app' }).site).toBe('browsewrapped.app')
+  })
+
   it('never includes domains, URLs, page titles or searches', () => {
     const json = JSON.stringify(buildPersonaCardData(report))
     for (const secret of ['github.com', 'stackoverflow', 'https://', 'rails/rails', 'solid queue']) {
@@ -93,6 +97,14 @@ describe('drawPersonaCard', () => {
       '1.5k', 'VISITS', '25.4h', '11 days', 'TOP TOPICS', 'Programming', '39.6%',
       'Aug 2, 2026 – Sep 30, 2026',
     ]))
+  })
+})
+
+describe('persona card watermark', () => {
+  it('prints the site domain next to the date range', () => {
+    const ctx = fakeContext()
+    drawPersonaCard(ctx, buildPersonaCardData(report, { site: 'browsewrapped.app' }))
+    expect(ctx.texts).toEqual(expect.arrayContaining(['Aug 2, 2026 – Sep 30, 2026', 'browsewrapped.app']))
   })
 })
 

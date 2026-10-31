@@ -30,7 +30,8 @@ This repo is the **React frontend**. The analysis happens in the Rails API: [bro
 - **Upload or import:** drop a Chrome Takeout JSON, an extension export (JSON or CSV), or the browser's own SQLite history database: Chrome/Edge `History`, Firefox `places.sqlite` or Safari `History.db` (the file picker has no extension filter, so the extensionless `History` file can be chosen). When the API runs on your own machine, "Import from Chrome" reads Chrome's database directly
 - **Export guide:** step-by-step tabs for Chrome, Firefox, Safari, Edge and other browsers, with file locations on macOS, Windows and Linux and a one-click copy for each path. It opens on the visitor's own browser
 - **Persona card:** a fun "you are…" summary (The Builder, The AI Pioneer…) based on your top topics
-- **Download image:** save your persona card as a 1080×1350 PNG (persona, top topics, key stats), made in your browser
+- **Download or share image:** save your persona card as a 1080×1350 PNG (persona, top topics, key stats, and the site address from `VITE_PUBLIC_URL` next to the date range), made in your browser. On phones the button opens the system share sheet (`navigator.share` with the file) and falls back to a download elsewhere
+- **Story pack:** five 1080×1920 slides for Instagram, WhatsApp or LinkedIn stories (persona, top topics, browsing rhythm, then vs now, streak), each with a "Make yours at …" watermark. Slide 1 is free; slides 2–5 unlock with a Wrapped Pass. "Make your own" links on shared reports carry `?ref=share`
 - **Stats:** total visits, hours browsed, daily average, top interest, streaks
 - **Charts:** topic breakdown, most-visited sites and pages, activity calendar, day × hour heatmap, weekly and monthly patterns
 - **Trends:** which interests are rising or falling, and how your curiosity shifted over time
