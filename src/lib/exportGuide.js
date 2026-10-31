@@ -32,7 +32,7 @@ export const BROWSERS = [
           windows: '%LOCALAPPDATA%\\Google\\Chrome\\User Data\\Default\\History',
           linux: '~/.config/google-chrome/Default/History',
         },
-        note: 'Using another Chrome profile? Open chrome://version and look for “Profile Path”.',
+        note: 'Chrome keeps only about the last 90 days of history on your computer, so your report covers roughly 3 months. Using another Chrome profile? Open chrome://version and look for “Profile Path”.',
       },
       {
         title: 'Or export it with Google Takeout',

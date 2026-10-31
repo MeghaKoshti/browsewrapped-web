@@ -92,4 +92,8 @@ describe('ExportGuide', () => {
     expect(writeText).toHaveBeenCalledWith('~/Library/Application Support/Microsoft Edge/Default/History')
     expect(screen.getByRole('button', { name: 'Copy macOS path' })).toHaveTextContent('Copied')
   })
+  it('warns that Chrome only keeps about 90 days of history', () => {
+    render(<ExportGuide initialBrowser="chrome" />)
+    expect(screen.getByText(/Chrome keeps only about the last 90 days of history/)).toBeInTheDocument()
+  })
 })

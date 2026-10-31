@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { createAnalysis, analyzeChrome, fetchSampleReport, canImportLocalChrome } from '../api/client'
 import { errorMessage } from '../api/errorMessage'
 import UrlStream from '../components/ui/UrlStream'
@@ -291,6 +291,12 @@ export default function UploadPage() {
                 ref={inputRef} type="file" className="hidden" aria-label="Browser history file (JSON, CSV or SQLite database)"
                 onChange={(e) => handleFile(e.target.files[0])}
               />
+              {/* stopPropagation: following a link must not also open the file picker. */}
+              <p style={{ fontSize: 11, color: 'var(--muted)', margin: '2px 0 0', lineHeight: 1.5 }} onClick={(e) => e.stopPropagation()}>
+                By uploading you agree to the{' '}
+                <Link to="/terms" style={{ color: 'var(--accent-text)' }}>Terms</Link> and{' '}
+                <Link to="/privacy" style={{ color: 'var(--accent-text)' }}>Privacy Policy</Link>.
+              </p>
             </div>
 
             <UploadPrivacy />

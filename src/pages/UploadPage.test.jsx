@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom'
 import UploadPage from './UploadPage'
@@ -152,5 +152,11 @@ describe('UploadPage', () => {
   it('shows a confirmation passed from the previous page', () => {
     renderUpload({ pathname: '/', state: { notice: 'Your report was deleted from our server.' } })
     expect(screen.getByRole('status')).toHaveTextContent('Your report was deleted from our server.')
+  })
+  it('tells uploaders they agree to the Terms and Privacy Policy, with links', () => {
+    renderUpload()
+    const notice = screen.getByText(/By uploading you agree to the/)
+    expect(within(notice).getByRole('link', { name: 'Terms' })).toHaveAttribute('href', '/terms')
+    expect(within(notice).getByRole('link', { name: 'Privacy Policy' })).toHaveAttribute('href', '/privacy')
   })
 })

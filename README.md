@@ -52,6 +52,23 @@ What the upload page tells visitors, and what actually happens:
 - **AI categorisation:** up to 50 domain names the rules don't recognise (for example `example.com`) may be sent to Google Gemini. Never full URLs, page titles or searches.
 - **Share links** contain aggregated stats and topics only and expire after 30 days.
 
+## Legal pages
+
+`/privacy`, `/terms`, `/refund` and `/contact` are lazy-loaded pages written for an **India-based individual operator** selling a one-time Wrapped Pass through a merchant of record (Dodo Payments). Every page links from the site footer, and the upload drop zone says "By uploading you agree to the Terms and Privacy Policy".
+
+> **Megha must review these pages before launch. They are a plain-English starting point, not legal advice.** Check them against the DPDP Act 2023 and its rules, the payment provider's requirements and how the app actually behaves (retention, processors, email provider, analytics), and ask a lawyer if anything is unclear.
+
+What to set before publishing:
+
+| Setting | Where | Used for |
+|---|---|---|
+| `VITE_LEGAL_NAME` | build env | Operator and grievance contact name (default `[Operator name]`) |
+| `VITE_CONTACT_EMAIL` | build env | Contact, privacy, grievance and refund email (default `contact@example.com`) |
+| `VITE_LEGAL_CITY` | build env | Courts named in the Terms (default `[City]`) |
+| `LEGAL_LAST_UPDATED` | `src/lib/legal.js` | The "Last updated" date on all four pages. Change it with every edit |
+
+The refund window, retention periods and minimum age are constants in the same file.
+
 ## Tech stack
 
 - React 19 + Vite
