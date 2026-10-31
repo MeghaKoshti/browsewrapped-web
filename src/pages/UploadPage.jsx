@@ -1,7 +1,13 @@
-import { useState, useRef, useCallback } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { createAnalysis, analyzeChrome, fetchSampleReport } from '../api/client'
+import { useState, useRef, useCallback, useEffect } from 'react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { createAnalysis, analyzeChrome, fetchSampleReport, canImportLocalChrome } from '../api/client'
+import { errorMessage } from '../api/errorMessage'
 import UrlStream from '../components/ui/UrlStream'
+import ExportGuide from '../components/upload/ExportGuide'
+import { detectBrowser, detectOS } from '../lib/exportGuide'
+import useDocumentTitle from '../hooks/useDocumentTitle'
+import { saveAnalysisDeleteToken } from '../lib/deleteTokens'
+import UploadPrivacy from '../components/upload/UploadPrivacy'
 
 const MAX_BYTES = 100 * 1024 * 1024
 
@@ -12,7 +18,18 @@ export default function UploadPage() {
   const [loadingMsg, setLoadingMsg] = useState('')
   const [error, setError] = useState('')
   const inputRef = useRef(null)
+  const errorRef = useRef(null)
   const navigate = useNavigate()
+  // One-off message from the previous page, e.g. "Your report was deleted".
+  const notice = useLocation().state?.notice
+  useDocumentTitle('Your year in tabs')
+  const [guide] = useState(() => ({ browser: detectBrowser(navigator.userAgent), os: detectOS(navigator.userAgent) }))
+
+  // The error box renders under the drop zone, below the fold on most
+  // laptops and phones, so bring it into view or the upload looks ignored.
+  useEffect(() => {
+    if (state === 'error') errorRef.current?.scrollIntoView?.({ block: 'nearest', behavior: 'smooth' })
+  }, [state, error])
 
   const onSuccess = useCallback((data, filename) => {
     navigate('/results', { state: { data, filename } })
@@ -34,13 +51,14 @@ export default function UploadPage() {
         setProgress(p)
         if (p === 100) setLoadingMsg('Analyzing patterns…')
       })
+      saveAnalysisDeleteToken(analysis.id, analysis.delete_token)
       // Completed analyses carry their result, so the next page can render it
       // straight away; pending ones are polled there.
       navigate(`/analyses/${analysis.id}`, {
         state: { filename: file.name, data: analysis.status === 'completed' ? analysis.result : null },
       })
     } catch (err) {
-      onError(err.response?.data?.error || err.message || 'Something went wrong')
+      onError(errorMessage(err, 'Something went wrong'))
     }
   }, [navigate, onError])
 
@@ -52,7 +70,7 @@ export default function UploadPage() {
       const data = await analyzeChrome()
       onSuccess(data, 'Chrome History')
     } catch (err) {
-      onError(err.response?.data?.error || err.message || 'Could not read Chrome history')
+      onError(errorMessage(err, 'Could not read Chrome history'))
     }
   }, [onSuccess, onError])
 
@@ -64,7 +82,7 @@ export default function UploadPage() {
       const data = await fetchSampleReport()
       onSuccess(data, 'Sample data')
     } catch (err) {
-      onError(err.response?.data?.error || err.message || 'Could not load the sample report')
+      onError(errorMessage(err, 'Could not load the sample report'))
     }
   }, [onSuccess, onError])
 
@@ -82,7 +100,7 @@ export default function UploadPage() {
       <UrlStream />
 
       {/* Content */}
-      <div className="relative z-10 w-full max-w-xl">
+      <main id="main" tabIndex={-1} className="relative z-10 w-full max-w-xl" style={{ outline: 'none' }}>
 
         {/* Brand wordmark */}
         <p className="mono text-center mb-12" style={{ fontSize: 10, letterSpacing: '0.3em', color: 'var(--muted)', textTransform: 'uppercase' }}>
@@ -103,6 +121,15 @@ export default function UploadPage() {
             Every click. Every rabbit hole. Finally visualized.
           </p>
         </div>
+
+        {notice && (
+          <p role="status" style={{
+            margin: '0 0 16px', padding: '12px 16px', borderRadius: 12, textAlign: 'center', fontSize: 13, color: 'var(--text)',
+            background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.3)',
+          }}>
+            <span aria-hidden="true">✓ </span>{notice}
+          </p>
+        )}
 
         {isLoading ? (
           /* Loading */
@@ -156,14 +183,16 @@ export default function UploadPage() {
               className="w-full"
               style={{
                 display: 'flex',
+                flexWrap: 'wrap',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: 10,
+                gap: '4px 10px',
                 padding: '16px 24px',
                 marginBottom: 14,
                 borderRadius: 18,
                 border: 'none',
-                background: 'linear-gradient(90deg, #a855f7, #f472b6)',
+                // Darker stops than the brand gradient so white text stays ≥ 4.5:1.
+                background: 'linear-gradient(90deg, #9333ea, #db2777)',
                 color: 'white',
                 cursor: 'pointer',
                 fontFamily: 'var(--font-display)',
@@ -172,39 +201,40 @@ export default function UploadPage() {
                 boxShadow: '0 8px 30px rgba(168,85,247,0.35)',
               }}
             >
-              <span aria-hidden="true">✨</span>
-              Try with sample data
-              <span style={{ fontSize: 12, fontWeight: 500, opacity: 0.85 }}>· no upload needed</span>
+              <span style={{ whiteSpace: 'nowrap' }}><span aria-hidden="true">✨</span> Try with sample data</span>
+              <span style={{ fontSize: 12, fontWeight: 500, whiteSpace: 'nowrap' }}>No upload needed</span>
             </button>
 
-            {/* ── Chrome primary CTA ── */}
-            <button
-              type="button"
-              onClick={handleChrome}
-              className="chrome-btn w-full text-left"
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 16,
-                padding: '20px 24px',
-                borderRadius: 18,
-                border: '1px solid rgba(168,85,247,0.4)',
-                background: 'var(--surface)',
-                cursor: 'pointer',
-                color: 'var(--text)',
-              }}
-            >
-              <span style={{ fontSize: 32, flexShrink: 0, lineHeight: 1 }}>🌐</span>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <p style={{ fontFamily: 'var(--font-display)', fontSize: 18, fontWeight: 700, color: 'white', lineHeight: 1.2, margin: 0 }}>
-                  Import from Chrome
-                </p>
-                <p style={{ fontSize: 13, color: 'var(--muted)', marginTop: 4 }}>
-                  Reads your local Chrome database — instant, no export needed
-                </p>
-              </div>
-              <span style={{ color: 'var(--accent)', fontSize: 22, flexShrink: 0, fontWeight: 300 }}>→</span>
-            </button>
+            {/* ── Chrome primary CTA (only when the API runs on this computer) ── */}
+            {canImportLocalChrome && (
+              <button
+                type="button"
+                onClick={handleChrome}
+                className="chrome-btn w-full text-left"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 16,
+                  padding: '20px 24px',
+                  borderRadius: 18,
+                  border: '1px solid rgba(168,85,247,0.4)',
+                  background: 'var(--surface)',
+                  cursor: 'pointer',
+                  color: 'var(--text)',
+                }}
+              >
+                <span style={{ fontSize: 32, flexShrink: 0, lineHeight: 1 }} aria-hidden="true">🌐</span>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <p style={{ fontFamily: 'var(--font-display)', fontSize: 18, fontWeight: 700, color: 'white', lineHeight: 1.2, margin: 0 }}>
+                    Import from Chrome
+                  </p>
+                  <p style={{ fontSize: 13, color: 'var(--muted)', marginTop: 4 }}>
+                    Reads your local Chrome database — instant, no export needed
+                  </p>
+                </div>
+                <span style={{ color: 'var(--accent)', fontSize: 22, flexShrink: 0, fontWeight: 300 }} aria-hidden="true">→</span>
+              </button>
+            )}
 
             {/* Divider */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '20px 0' }}>
@@ -224,13 +254,13 @@ export default function UploadPage() {
               onDragLeave={() => setDragging(false)}
               onClick={() => inputRef.current?.click()}
             >
-              <span style={{ fontSize: 26 }}>📂</span>
+              <span style={{ fontSize: 26 }} aria-hidden="true">📂</span>
               <div>
                 <p style={{ fontFamily: 'var(--font-display)', fontWeight: 600, color: 'var(--text)', margin: 0 }}>
-                  {dragging ? 'Drop it here' : 'Drop your export file'}
+                  {dragging ? 'Drop it here' : 'Drop your history file'}
                 </p>
-                <p className="mono" style={{ fontSize: 11, color: 'var(--muted)', marginTop: 4, letterSpacing: '0.06em' }}>
-                  JSON · CSV
+                <p id="drop-zone-formats" className="mono" style={{ fontSize: 11, color: 'var(--muted)', marginTop: 4, letterSpacing: '0.06em' }}>
+                  JSON · CSV · SQLite
                 </p>
               </div>
               <button
@@ -241,46 +271,47 @@ export default function UploadPage() {
                   borderRadius: 100,
                   border: '1px solid rgba(168,85,247,0.45)',
                   background: 'rgba(168,85,247,0.1)',
-                  color: 'var(--accent)',
+                  color: 'var(--accent-text)',
                   fontSize: 13,
                   fontFamily: 'var(--font-display)',
                   fontWeight: 600,
                   cursor: 'pointer',
                   transition: 'all 0.15s',
                 }}
+                // The keyboard way into the drop zone: Tab here, Enter opens the file picker.
+                aria-describedby="drop-zone-formats"
                 onClick={(e) => { e.stopPropagation(); inputRef.current?.click() }}
               >
-                Choose File
+                Choose file
               </button>
+              {/* No accept filter on purpose: Chrome and Edge name their database
+                  plain "History", and an extension filter would grey it out in
+                  the file picker. The API checks the file's contents instead. */}
               <input
-                ref={inputRef} type="file" accept=".json,.csv" className="hidden"
+                ref={inputRef} type="file" className="hidden" aria-label="Browser history file (JSON, CSV or SQLite database)"
                 onChange={(e) => handleFile(e.target.files[0])}
               />
+              {/* stopPropagation: following a link must not also open the file picker. */}
+              <p style={{ fontSize: 11, color: 'var(--muted)', margin: '2px 0 0', lineHeight: 1.5 }} onClick={(e) => e.stopPropagation()}>
+                By uploading you agree to the{' '}
+                <Link to="/terms" style={{ color: 'var(--accent-text)' }}>Terms</Link> and{' '}
+                <Link to="/privacy" style={{ color: 'var(--accent-text)' }}>Privacy Policy</Link>.
+              </p>
             </div>
 
-            {/* Format hints */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginTop: 12 }}>
-              {[
-                { title: 'Chrome Takeout', body: 'takeout.google.com → Chrome → export BrowserHistory.json' },
-                { title: 'Firefox / other', body: 'Install an "Export Browsing History" add-on for a CSV or JSON file' },
-              ].map((h) => (
-                <div key={h.title} style={{ padding: '12px 14px', borderRadius: 12, border: '1px solid var(--border)', background: 'var(--surface)' }}>
-                  <p style={{ fontSize: 12, fontFamily: 'var(--font-display)', fontWeight: 600, color: 'var(--text)', margin: '0 0 4px' }}>{h.title}</p>
-                  <p style={{ fontSize: 11, color: 'var(--muted)', margin: 0, lineHeight: 1.5 }}>{h.body}</p>
-                </div>
-              ))}
-            </div>
+            <UploadPrivacy />
           </>
         )}
 
         {/* Error */}
         {state === 'error' && (
-          <div style={{
+          <div ref={errorRef} role="alert" style={{
             marginTop: 14, padding: '12px 16px', borderRadius: 12, textAlign: 'center',
             background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)',
           }}>
             <p style={{ fontSize: 13, color: '#fca5a5', margin: 0 }}>{error}</p>
             <button
+              type="button"
               style={{ marginTop: 8, fontSize: 12, color: 'var(--muted)', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}
               onClick={() => setState('idle')}
             >
@@ -288,11 +319,10 @@ export default function UploadPage() {
             </button>
           </div>
         )}
-      </div>
 
-      <style>{`
-        @keyframes rotate { to { transform: rotate(360deg); } }
-      `}</style>
+        {/* After the error, so an upload problem shows right under the drop zone. */}
+        {!isLoading && <ExportGuide initialBrowser={guide.browser} os={guide.os} />}
+      </main>
     </div>
   )
 }

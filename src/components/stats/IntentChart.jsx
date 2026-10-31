@@ -1,3 +1,5 @@
+import { textTint } from '../../lib/color'
+
 const SEGMENTS = [
   { key: 'typed_pct',  label: 'Typed directly', color: '#a855f7', desc: 'You knew where you were going' },
   { key: 'search_pct', label: 'Via search',      color: '#06b6d4', desc: 'Discovered through search engines' },
@@ -29,7 +31,7 @@ export default function IntentChart({ intent }) {
           if (!hasData && pct === 0) return null
           return (
             <div key={key} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <div style={{ width: 44, textAlign: 'right', fontFamily: 'var(--font-display)', fontSize: 16, fontWeight: 700, color, flexShrink: 0 }}>
+              <div style={{ width: 44, textAlign: 'right', fontFamily: 'var(--font-display)', fontSize: 16, fontWeight: 700, color: textTint(color), flexShrink: 0 }}>
                 {pct}%
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
@@ -62,7 +64,7 @@ export default function IntentChart({ intent }) {
                 fontFamily: 'var(--font-mono)', fontSize: 11, color: '#c4b5fd',
               }}>
                 {d.domain}
-                <span style={{ color: 'rgba(196,181,253,0.5)', marginLeft: 5 }}>×{d.typed_count}</span>
+                <span style={{ color: 'rgba(196,181,253,0.8)', marginLeft: 5 }}>×{d.typed_count}</span>
               </div>
             ))}
           </div>

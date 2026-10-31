@@ -1,3 +1,5 @@
+import { textTint } from '../../lib/color'
+
 function truncate(str, max) {
   if (!str) return ''
   return str.length > max ? str.slice(0, max) + '…' : str
@@ -32,7 +34,7 @@ export default function TopPages({ pages }) {
               >
                 {truncate(page.title || page.domain, 55)}
               </a>
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: page.color, flexShrink: 0, opacity: 0.8 }}>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: textTint(page.color), flexShrink: 0 }}>
                 {page.domain}
               </span>
             </div>

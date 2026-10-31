@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { summarizeCalendar } from '../../lib/chartSummaries'
 
 const CELL  = 11
 const GAP   = 2
@@ -54,7 +55,8 @@ export default function ActivityCalendar({ calendar }) {
 
   const LEFT_PAD = 18
   const TOP_PAD  = 18
-  const W = weeks.length * STEP + LEFT_PAD + 4
+  // Wide enough for the Less/More legend even when the history is short.
+  const W = Math.max(weeks.length * STEP + LEFT_PAD + 4, 150) + 28
   const H = 7 * STEP + TOP_PAD + 22
 
   const totalVisits = days.reduce((s, d) => s + d.visits, 0)
@@ -62,7 +64,7 @@ export default function ActivityCalendar({ calendar }) {
 
   return (
     <div>
-      <div style={{ position: 'relative', overflowX: 'auto', paddingBottom: 4 }}>
+      <div style={{ position: 'relative', overflowX: 'auto', paddingBottom: 4 }} tabIndex={0} role="region" aria-label="Activity calendar">
         {/* Hover tooltip */}
         {tooltip && (
           <div style={{
@@ -77,12 +79,12 @@ export default function ActivityCalendar({ calendar }) {
           </div>
         )}
 
-        <svg width={W} height={H} style={{ display: 'block', minWidth: Math.min(W, 300) }}>
+        <svg width={W} height={H} style={{ display: 'block', minWidth: Math.min(W, 300) }} role="img" aria-label={summarizeCalendar(calendar)}>
           {/* Month labels */}
           {monthLabels.map(({ wi, label }) => (
             <text key={`${wi}-${label}`}
               x={LEFT_PAD + wi * STEP} y={11}
-              fill="#52526e" fontSize={9} fontFamily="var(--font-mono)"
+              fill="#8b8ba7" fontSize={9} fontFamily="var(--font-mono)"
             >
               {label}
             </text>
@@ -92,7 +94,7 @@ export default function ActivityCalendar({ calendar }) {
           {[1, 3, 5].map((di) => (
             <text key={di}
               x={LEFT_PAD - 4} y={TOP_PAD + di * STEP + CELL / 2 + 3}
-              fill="#52526e" fontSize={8} textAnchor="end" fontFamily="var(--font-mono)"
+              fill="#8b8ba7" fontSize={8} textAnchor="end" fontFamily="var(--font-mono)"
             >
               {DAY_ABBR[di]}
             </text>
@@ -130,21 +132,21 @@ export default function ActivityCalendar({ calendar }) {
             )
           )}
 
-          {/* Legend */}
+          {/* Legend (right-aligned; leaves room for the "More" label) */}
           {[0, 0.12, 0.35, 0.65, 1].map((r, i) => (
             <rect key={i}
-              x={W - 86 + i * 14} y={H - 13}
+              x={W - 112 + i * 14} y={H - 13}
               width={CELL} height={CELL} rx={2}
               fill={cellColor(r * max, max)}
             />
           ))}
-          <text x={W - 90} y={H - 5} fill="#52526e" fontSize={8} textAnchor="end" fontFamily="var(--font-mono)">Less</text>
-          <text x={W - 86 + 5 * 14 + 2} y={H - 5} fill="#52526e" fontSize={8} fontFamily="var(--font-mono)">More</text>
+          <text x={W - 116} y={H - 5} fill="#8b8ba7" fontSize={8} textAnchor="end" fontFamily="var(--font-mono)">Less</text>
+          <text x={W - 112 + 5 * 14 + 2} y={H - 5} fill="#8b8ba7" fontSize={8} fontFamily="var(--font-mono)">More</text>
         </svg>
       </div>
 
       {/* Summary row */}
-      <div style={{ display: 'flex', gap: 24, marginTop: 12 }}>
+      <div style={{ display: 'flex', gap: '8px 24px', flexWrap: 'wrap', marginTop: 12 }}>
         <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--muted)' }}>
           <span style={{ color: 'var(--text)', fontWeight: 500 }}>{activeDays}</span> active days
         </span>

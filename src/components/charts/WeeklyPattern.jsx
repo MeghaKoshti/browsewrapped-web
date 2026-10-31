@@ -1,4 +1,5 @@
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Cell, ResponsiveContainer } from 'recharts'
+import { summarizeWeeklyPattern } from '../../lib/chartSummaries'
 
 const CustomTooltip = ({ active, payload }) => {
   if (!active || !payload?.length) return null
@@ -26,11 +27,13 @@ export default function WeeklyPattern({ data }) {
   const weekend = ['Sat', 'Sun']
 
   return (
+    <div role="img" aria-label={summarizeWeeklyPattern(ordered)}>
     <ResponsiveContainer width="100%" height={180}>
-      <BarChart data={ordered} margin={{ top: 8, right: 8, left: -20, bottom: 4 }}>
+      <BarChart accessibilityLayer={false} data={ordered} margin={{ top: 8, right: 4, left: 4, bottom: 4 }}>
         <XAxis
           dataKey="day"
-          tick={{ fill: '#52526e', fontSize: 11, fontFamily: 'var(--font-mono)' }}
+          interval={0}
+          tick={{ fill: '#8b8ba7', fontSize: 11, fontFamily: 'var(--font-mono)' }}
           axisLine={false}
           tickLine={false}
         />
@@ -47,5 +50,6 @@ export default function WeeklyPattern({ data }) {
         </Bar>
       </BarChart>
     </ResponsiveContainer>
+    </div>
   )
 }

@@ -1,6 +1,19 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+/* Tailwind theme additions (was tailwind.config.js before Tailwind 4):
+   bg-surface, border-border and friends. */
+@theme {
+  --color-surface: #12121a;
+  --color-border: rgba(255,255,255,0.08);
+}
+
+/* Tailwind 4 changed the default border colour to currentColor; keep the
+   v3 default so a bare `border` class looks the same as before. */
+@layer base {
+  *, ::after, ::before, ::backdrop, ::file-selector-button {
+    border-color: #e5e7eb; /* v3 gray-200 */
+  }
+}
 
 /* ── Tokens ─────────────────────────────────────────── */
 :root {
@@ -10,9 +23,10 @@
   --border:     rgba(255,255,255,0.07);
   --border-hi:  rgba(255,255,255,0.13);
   --text:       #eaeaf4;
-  --muted:      #52526e;
+  --muted:      #8b8ba7;   /* 5.5:1+ on every surface (WCAG AA) */
   --accent:     #a855f7;
   --accent-2:   #f472b6;
+  --accent-text: #c084fc;  /* accent for text on tinted surfaces (7:1) */
   --accent-glow: rgba(168,85,247,0.22);
 
   --font-display: 'Space Grotesk', system-ui, sans-serif;
@@ -68,6 +82,30 @@ body {
   from { transform: translateY(0); }
   to   { transform: translateY(calc(-100vh - 60px)); }
 }
+
+/* ── Focus & skip link ─────────────────────────────── */
+/* One visible focus ring for every interactive element (keyboard only). */
+:focus-visible {
+  outline: 2px solid #c084fc;
+  outline-offset: 3px;
+}
+
+.skip-link {
+  position: absolute;
+  left: 16px;
+  top: -100px;
+  z-index: 100;
+  padding: 10px 16px;
+  border-radius: 10px;
+  background: var(--surface-2);
+  color: var(--text);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none;
+  border: 1px solid #c084fc;
+}
+.skip-link:focus-visible { top: 12px; }
 
 /* ── Cards ──────────────────────────────────────────── */
 .card {
@@ -126,6 +164,7 @@ body {
   cursor: pointer;
 }
 .drop-zone:hover,
+.drop-zone:focus-within,
 .drop-zone.dragging {
   border-color: var(--accent);
   background: rgba(168,85,247,0.06);
@@ -187,8 +226,161 @@ body {
   to { transform: rotate(360deg); }
 }
 
+/* Kept here rather than in a <style> tag so the CSP needs no 'unsafe-inline' for <style> elements. */
+.status-spinner { animation: status-spin 1.2s linear infinite; }
+@keyframes status-spin { to { transform: rotate(360deg); } }
+
+/* ── Loading skeletons ──────────────────────────────── */
+.skeleton {
+  background: linear-gradient(90deg, var(--surface) 0%, var(--surface-2) 50%, var(--surface) 100%);
+  background-size: 200% 100%;
+  animation: skeleton-sheen 1.6s ease-in-out infinite;
+}
+@keyframes skeleton-sheen {
+  from { background-position: 100% 0; }
+  to   { background-position: -100% 0; }
+}
+
 /* ── Reduced motion ─────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   .url-fragment { animation: none; }
   .card-glow::before { transition: none; }
+  .skeleton { animation: none; }
+  .status-spinner { animation-duration: 4s; }
 }
+
+/* ── Reading pages (legal pages, export guides) ─────── */
+/* Class-only styling so prerendered HTML looks right under the CSP. */
+.doc-page {
+  min-height: 100vh;
+  background: var(--void);
+  padding: 0 20px 64px;
+}
+.doc-header {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 28px 0 0;
+}
+.doc-wordmark {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-decoration: none;
+}
+.doc-wordmark:hover { color: var(--text); }
+.doc {
+  max-width: 720px;
+  margin: 0 auto;
+  padding-top: 40px;
+  outline: none;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.7;
+}
+.doc h1 {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 7vw, 3rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  color: var(--text);
+  margin: 0;
+}
+.doc h2 {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text);
+  margin: 2.4em 0 0.5em;
+}
+.doc h3 {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+  margin: 1.6em 0 0.4em;
+}
+.doc p, .doc ul, .doc ol { margin: 0 0 1em; max-width: 68ch; }
+.doc ul { list-style: disc; padding-left: 1.3em; }
+.doc ol { list-style: decimal; padding-left: 1.3em; }
+.doc li { margin-bottom: 0.35em; }
+.doc li::marker { color: var(--accent); }
+.doc strong { color: var(--text); font-weight: 600; }
+.doc a { color: var(--accent-text); text-underline-offset: 3px; }
+.doc a:hover { color: var(--text); }
+.doc code {
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+  color: var(--text);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 1px 6px;
+  overflow-wrap: anywhere;
+}
+.doc .doc-meta {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  margin-top: 12px;
+}
+.doc .doc-intro {
+  font-size: 1.1rem;
+  color: var(--text);
+  line-height: 1.6;
+  margin-top: 20px;
+}
+.doc-table-wrap { overflow-x: auto; margin: 0 0 1em; border: 1px solid var(--border); border-radius: 14px; }
+.doc-table { width: 100%; border-collapse: collapse; font-size: 13px; line-height: 1.55; min-width: 560px; }
+.doc-table th, .doc-table td { text-align: left; vertical-align: top; padding: 12px 14px; border-bottom: 1px solid var(--border); }
+.doc-table tr:last-child th, .doc-table tr:last-child td { border-bottom: none; }
+.doc-table thead th {
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+  background: var(--surface-2);
+}
+.doc-table tbody th { color: var(--text); font-weight: 500; width: 38%; }
+.doc .doc-callout {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 18px 20px;
+  border-radius: 14px;
+  background: rgba(168,85,247,0.08);
+  border: 1px solid rgba(168,85,247,0.28);
+  margin-top: 28px;
+}
+.doc .doc-callout a { font-family: var(--font-display); font-size: 1.25rem; font-weight: 600; overflow-wrap: anywhere; }
+.doc .doc-callout span { font-size: 13px; }
+
+/* ── Site footer ────────────────────────────────────── */
+.site-footer {
+  border-top: 1px solid var(--border);
+  background: var(--void);
+  padding: 24px 20px 32px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--muted);
+}
+.site-footer ul {
+  list-style: none;
+  margin: 0 0 10px;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px 20px;
+}
+.site-footer a {
+  color: var(--muted);
+  text-decoration: none;
+  font-family: var(--font-display);
+  font-size: 13px;
+  display: inline-block;
+  padding: 6px 2px;
+}
+.site-footer a:hover { color: var(--text); text-decoration: underline; }
+.site-footer p { margin: 0; }

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { summarizeHeatmap } from '../../lib/chartSummaries'
 
 const CELL = 21
 const GAP  = 3
@@ -40,7 +41,8 @@ export default function Heatmap({ heatmap }) {
   const HOUR_TICKS = [0, 3, 6, 9, 12, 15, 18, 21, 23]
 
   return (
-    <div style={{ position: 'relative', overflowX: 'auto' }}>
+    // Focusable so keyboard users can scroll it sideways on narrow screens.
+    <div style={{ position: 'relative', overflowX: 'auto' }} tabIndex={0} role="region" aria-label="Day by hour heatmap">
       {tooltip && (
         <div style={{
           position: 'absolute', pointerEvents: 'none', zIndex: 10,
@@ -54,14 +56,14 @@ export default function Heatmap({ heatmap }) {
         </div>
       )}
 
-      <svg width={W} height={H} style={{ display: 'block', minWidth: W }}>
+      <svg width={W} height={H} style={{ display: 'block', minWidth: W }} role="img" aria-label={summarizeHeatmap(heatmap)}>
         {/* Day labels */}
         {(day_labels || []).map((day, di) => (
           <text
             key={day}
             x={LEFT_PAD - 6}
             y={di * STEP + CELL / 2 + 4}
-            fill="#52526e" fontSize={10} textAnchor="end"
+            fill="#8b8ba7" fontSize={10} textAnchor="end"
             fontFamily="var(--font-mono)"
           >
             {day}
@@ -74,7 +76,7 @@ export default function Heatmap({ heatmap }) {
             key={h}
             x={LEFT_PAD + h * STEP + CELL / 2}
             y={7 * STEP + BOTTOM_PAD - 4}
-            fill="#52526e" fontSize={9} textAnchor="middle"
+            fill="#8b8ba7" fontSize={9} textAnchor="middle"
             fontFamily="var(--font-mono)"
           >
             {fmtHour(h)}

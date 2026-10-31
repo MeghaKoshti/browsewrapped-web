@@ -1,21 +1,23 @@
 import { useState } from 'react'
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Cell, ResponsiveContainer } from 'recharts'
+import { summarizeTimeByTopic } from '../../lib/chartSummaries'
+import { textTint } from '../../lib/color'
 
 const CustomTooltip = ({ active, payload, mode }) => {
   if (!active || !payload?.length) return null
   const d = payload[0].payload
   return (
     <div style={{ background: '#13132a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, padding: '10px 14px' }}>
-      <p style={{ margin: 0, fontFamily: 'var(--font-display)', fontSize: 13, fontWeight: 600, color: d.color }}>{d.name}</p>
+      <p style={{ margin: 0, fontFamily: 'var(--font-display)', fontSize: 13, fontWeight: 600, color: textTint(d.color) }}>{d.name}</p>
       {mode === 'time' ? (
         <>
-          <p style={{ margin: '4px 0 0', fontSize: 13, color: '#eaeaf4' }}>{d.hours}h <span style={{ color: '#52526e' }}>({d.minutes} min)</span></p>
-          <p style={{ margin: '2px 0 0', fontFamily: 'var(--font-mono)', fontSize: 11, color: '#52526e' }}>{d.percentage}% of browsing time</p>
+          <p style={{ margin: '4px 0 0', fontSize: 13, color: '#eaeaf4' }}>{d.hours}h <span style={{ color: '#8b8ba7' }}>({d.minutes} min)</span></p>
+          <p style={{ margin: '2px 0 0', fontFamily: 'var(--font-mono)', fontSize: 11, color: '#8b8ba7' }}>{d.percentage}% of browsing time</p>
         </>
       ) : (
         <>
           <p style={{ margin: '4px 0 0', fontSize: 13, color: '#eaeaf4' }}>{d.visits_with_duration?.toLocaleString()} visits</p>
-          <p style={{ margin: '2px 0 0', fontFamily: 'var(--font-mono)', fontSize: 11, color: '#52526e' }}>{d.percentage}% of timed visits</p>
+          <p style={{ margin: '2px 0 0', fontFamily: 'var(--font-mono)', fontSize: 11, color: '#8b8ba7' }}>{d.percentage}% of timed visits</p>
         </>
       )}
     </div>
@@ -36,7 +38,7 @@ export default function TimeByTopic({ timeByTopic }) {
   return (
     <div>
       {/* Toggle + summary */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap', marginBottom: 16 }}>
         <p style={{ fontFamily: 'var(--font-mono)', fontSize: 11, color: 'var(--muted)', margin: 0 }}>
           Total: <span style={{ color: 'var(--text)', fontWeight: 500 }}>{total}{mode === 'time' ? 'h' : ' visits'}</span>
         </p>
@@ -44,11 +46,13 @@ export default function TimeByTopic({ timeByTopic }) {
           {['time', 'visits'].map((m) => (
             <button
               key={m}
+              type="button"
+              aria-pressed={mode === m}
               onClick={() => setMode(m)}
               style={{
                 fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.08em', textTransform: 'uppercase',
                 padding: '5px 12px', borderRadius: 6, border: 'none', cursor: 'pointer', transition: 'all 0.15s',
-                background: mode === m ? 'var(--accent)' : 'transparent',
+                background: mode === m ? '#7e22ce' : 'transparent',
                 color: mode === m ? '#fff' : 'var(--muted)',
               }}
             >
@@ -58,8 +62,9 @@ export default function TimeByTopic({ timeByTopic }) {
         </div>
       </div>
 
+      <div role="img" aria-label={summarizeTimeByTopic(top, mode)}>
       <ResponsiveContainer width="100%" height={Math.max(220, top.length * 36)}>
-        <BarChart data={top} layout="vertical" margin={{ left: 96, right: 32, top: 4, bottom: 4 }}>
+        <BarChart accessibilityLayer={false} data={top} layout="vertical" margin={{ left: 8, right: 32, top: 4, bottom: 4 }}>
           <XAxis type="number" hide />
           <YAxis
             type="category"
@@ -77,6 +82,7 @@ export default function TimeByTopic({ timeByTopic }) {
           </Bar>
         </BarChart>
       </ResponsiveContainer>
+      </div>
 
       {/* Legend: total hours per top 3 */}
       <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginTop: 12 }}>

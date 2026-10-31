@@ -11,9 +11,9 @@ export default function StatusScreen({ children }) {
       >
         BrowseWrapped
       </Link>
-      <div className="card p-10 w-full max-w-md flex flex-col items-center gap-5 text-center">
+      <main id="main" tabIndex={-1} className="card p-10 w-full max-w-md flex flex-col items-center gap-5 text-center" style={{ outline: 'none' }}>
         {children}
-      </div>
+      </main>
     </div>
   )
 }
@@ -32,11 +32,6 @@ export function Spinner() {
           <stop offset="100%" stopColor="#f472b6" />
         </linearGradient>
       </defs>
-      <style>{`
-        .status-spinner { animation: status-spin 1.2s linear infinite; }
-        @keyframes status-spin { to { transform: rotate(360deg); } }
-        @media (prefers-reduced-motion: reduce) { .status-spinner { animation-duration: 4s; } }
-      `}</style>
     </svg>
   )
 }

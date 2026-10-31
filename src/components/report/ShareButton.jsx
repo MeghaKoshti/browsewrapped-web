@@ -1,13 +1,14 @@
 import { useState } from 'react'
 import { createShareLink, deleteShareLink } from '../../api/client'
 import { saveDeleteToken, forgetDeleteToken } from '../../lib/shareTokens'
+import { errorMessage } from '../../api/errorMessage'
 
 const pillButton = {
   padding: '10px 22px',
   borderRadius: 100,
   border: '1px solid rgba(168,85,247,0.45)',
   background: 'rgba(168,85,247,0.12)',
-  color: 'var(--accent)',
+  color: 'var(--accent-text)',
   fontFamily: 'var(--font-display)',
   fontWeight: 600,
   fontSize: 14,
@@ -36,7 +37,7 @@ export default function ShareButton({ analysisId, report }) {
       setShare(created)
       setState('created')
     } catch (err) {
-      setError(err.response?.data?.error || 'Could not create a share link. Please try again.')
+      setError(errorMessage(err, 'Could not create a share link. Please try again.'))
       setState('error')
     }
   }
