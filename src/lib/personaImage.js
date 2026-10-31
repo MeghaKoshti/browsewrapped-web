@@ -15,6 +15,7 @@ export const CARD_HEIGHT = 1350
 export const OG_WIDTH = 1200
 export const OG_HEIGHT = 630
 export const OG_MAX_BYTES = 300 * 1024
+const OG_GLOW_RINGS = 20
 
 export const DISPLAY_FONT = '"Space Grotesk", system-ui, sans-serif'
 export const MONO_FONT = '"DM Mono", "Courier New", monospace'
@@ -234,11 +235,15 @@ export function drawOgCard(ctx, data) {
 
   ctx.fillStyle = '#06060e'
   ctx.fillRect(0, 0, W, H)
-  const glow = ctx.createRadialGradient(W * 0.2, 0, 0, W * 0.2, 0, 640)
-  glow.addColorStop(0, hexToRgba(data.color, 0.32))
-  glow.addColorStop(1, hexToRgba(data.color, 0))
-  ctx.fillStyle = glow
-  ctx.fillRect(0, 0, W, H)
+  // The glow is stacked faint rings, not a radial gradient: Chromium dithers
+  // gradients, and that noise made the PNG ~560 KB, over the 300 KB link
+  // preview cap (WhatsApp skips bigger images). Rings keep it near 160 KB.
+  ctx.fillStyle = hexToRgba(data.color, (0.32 / OG_GLOW_RINGS).toFixed(4))
+  for (let i = 0; i < OG_GLOW_RINGS; i++) {
+    ctx.beginPath()
+    ctx.arc(W * 0.2, 0, 640 * (1 - i / OG_GLOW_RINGS), 0, Math.PI * 2)
+    ctx.fill()
+  }
   ctx.textBaseline = 'alphabetic'
   ctx.textAlign = 'left'
 

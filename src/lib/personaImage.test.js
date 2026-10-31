@@ -115,6 +115,14 @@ describe('drawOgCard', () => {
     expect(ctx.texts).toEqual(expect.arrayContaining(['YOU ARE', 'The Builder', 'TOP TOPICS', 'Programming', '39.6%', 'browsewrapped.app']))
     expect([OG_WIDTH, OG_HEIGHT]).toEqual([1200, 630])
   })
+
+  it('draws its glow without a radial gradient, which Chromium dithers into a PNG over the 300 KB cap', () => {
+    const ctx = fakeContext()
+    const radial = vi.fn()
+    ctx.createRadialGradient = radial
+    drawOgCard(ctx, buildPersonaCardData(report))
+    expect(radial).not.toHaveBeenCalled()
+  })
 })
 
 describe('renderPersonaCardPng', () => {
