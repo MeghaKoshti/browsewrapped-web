@@ -87,6 +87,15 @@ describe('drawStorySlide', () => {
     expect(titleLines.length).toBeLessThanOrEqual(3)
   })
 
+  it('leaves out a current streak of 0 (an older export) instead of printing "0 days"', () => {
+    const streak = slides.find((s) => s.id === 'streak')
+    const ctx = fakeContext()
+    drawStorySlide(ctx, { ...streak, current: 0 })
+    expect(ctx.texts).not.toContain('CURRENT STREAK')
+    expect(ctx.texts).not.toContain('0 days')
+    expect(ctx.texts).toEqual(expect.arrayContaining(['ACTIVE DAYS', 'BROWSING SESSIONS']))
+  })
+
   it('leaves the watermark out when no site is configured', () => {
     const ctx = fakeContext()
     drawStorySlide(ctx, { ...slides[0], site: '' })

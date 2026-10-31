@@ -298,7 +298,9 @@ function drawStreak(ctx, s) {
   text(ctx, s.longest === 1 ? 'day in a row' : 'days in a row', PAD, 960, { font: `400 60px ${DISPLAY_FONT}`, color: MUTED })
   const rows = [
     s.activeDays && { label: 'Active days', value: s.totalDays ? `${s.activeDays} of ${s.totalDays}` : String(s.activeDays) },
-    { label: 'Current streak', value: `${s.current} ${s.current === 1 ? 'day' : 'days'}` },
+    // The API counts the current streak back from today, so an older export
+    // shows 0; "0 days" under a big streak reads like a mistake on a post.
+    s.current > 0 && { label: 'Current streak', value: `${s.current} ${s.current === 1 ? 'day' : 'days'}` },
     s.sessions && { label: 'Browsing sessions', value: compact(s.sessions) },
   ].filter(Boolean)
   let y = 1160
