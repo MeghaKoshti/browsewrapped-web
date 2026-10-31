@@ -9,6 +9,7 @@ import { detectBrowser, detectOS } from '../lib/exportGuide'
 import useDocumentTitle from '../hooks/useDocumentTitle'
 import { saveAnalysisDeleteToken } from '../lib/deleteTokens'
 import UploadPrivacy from '../components/upload/UploadPrivacy'
+import LandingInfo from '../components/upload/LandingInfo'
 
 const MAX_BYTES = 100 * 1024 * 1024
 
@@ -325,6 +326,7 @@ export default function UploadPage() {
 
         {/* After the error, so an upload problem shows right under the drop zone. */}
         {!isLoading && <ExportGuide initialBrowser={guide.browser} os={guide.os} />}
+        {!isLoading && <LandingInfo />}
       </main>
     </div>
   )

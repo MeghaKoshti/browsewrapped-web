@@ -57,6 +57,13 @@ What the upload page tells visitors, and what actually happens:
 - **AI categorisation:** up to 50 domain names the rules don't recognise (for example `example.com`) may be sent to Google Gemini. Never full URLs, page titles or searches.
 - **Share links** contain aggregated stats and topics only and expire after 30 days.
 
+## SEO and export guides
+
+- **Export guides:** `/guide/chrome`, `/guide/firefox`, `/guide/safari` and `/guide/edge` come from the same data as the upload page's guide (`src/lib/exportGuide.js` via `src/lib/seo.js`), each with its own title, description and H1 and a link back to the upload page.
+- **Prerendered:** after `vite build`, `scripts/seoPlugin.js` writes `dist/guide/<browser>/index.html` with the full guide as static HTML, so the pages read fine without JavaScript. React takes over when the script loads (same markup and classes). It also writes `dist/sitemap.xml` and `dist/robots.txt`, which keeps reports, shares and billing pages out of search.
+- **Landing page:** "How it works" in 3 steps and a privacy FAQ under the upload box. `index.html` gets the title, description, Open Graph tags and two JSON-LD blocks (`SoftwareApplication` and `FAQPage`) at build time. JSON-LD uses `<script type="application/ld+json">`, a data block the browser never runs, so the CSP stays `script-src 'self'` with no hashes or `'unsafe-inline'`.
+- **Absolute URLs:** sitemap and `og:image` need the public address. Set `VITE_PUBLIC_URL`; on Vercel the build falls back to `VERCEL_PROJECT_PRODUCTION_URL`, and locally to `http://localhost:4173`.
+
 ## Pricing and the Wrapped Pass
 
 The Wrapped Pass is a one-time payment (no subscription) that unlocks extra features for 12 months. The API owns prices, checkout and entitlements; the web app only shows them.

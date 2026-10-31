@@ -21,6 +21,7 @@ const PricingPage = lazy(() => import('./pages/billing/PricingPage'))
 const BillingSuccessPage = lazy(() => import('./pages/billing/BillingSuccessPage'))
 const BillingCancelPage = lazy(() => import('./pages/billing/BillingCancelPage'))
 const VerifyPage = lazy(() => import('./pages/billing/VerifyPage'))
+const GuidePage = lazy(() => import('./pages/guide/GuidePage'))
 
 export default function App() {
   return (
@@ -41,6 +42,7 @@ export default function App() {
             <Route path="/billing/success" element={<BillingSuccessPage />} />
             <Route path="/billing/cancel" element={<BillingCancelPage />} />
             <Route path="/auth/verify" element={<VerifyPage />} />
+            <Route path="/guide/:browser" element={<GuidePage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
           <SiteFooter />

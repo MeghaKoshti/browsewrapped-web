@@ -624,3 +624,88 @@ input[type="email"]::placeholder { color: #6b6b88; }
 .story-error { font-size: 11px; color: #fca5a5; }
 .pass-status-muted { color: var(--muted); }
 .pass-status a { color: var(--accent-text); }
+
+/* ── Export guide pages ─────────────────────────────── */
+.doc .doc-tip {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--text);
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: rgba(168,85,247,0.08);
+  border: 1px solid rgba(168,85,247,0.25);
+}
+.doc .guide-paths { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.doc .guide-paths li {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+}
+.doc .guide-paths strong { font-family: var(--font-display); font-size: 13px; }
+.doc .guide-paths code { align-self: flex-start; padding: 0; border: none; background: none; font-size: 13px; }
+.doc .guide-paths span { font-size: 12px; line-height: 1.5; }
+.doc .guide-cta {
+  margin: 48px 0 24px;
+  padding: 24px;
+  border-radius: 18px;
+  border: 1px solid rgba(168,85,247,0.45);
+  background: radial-gradient(ellipse 80% 100% at 100% 0%, rgba(168,85,247,0.16), transparent 70%), var(--surface);
+}
+.doc .guide-cta h2 { margin-top: 0; }
+.doc .guide-cta .btn-primary { color: white; }
+.doc .guide-others { font-size: 14px; }
+
+/* ── Landing: how it works + privacy FAQ ────────────── */
+.landing-info { margin-top: 40px; text-align: left; display: flex; flex-direction: column; gap: 36px; }
+.landing-info h2 { font-family: var(--font-display); font-size: 1.25rem; font-weight: 600; color: var(--text); margin: 0 0 14px; }
+.how-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; counter-reset: step; }
+.how-steps li {
+  counter-increment: step;
+  position: relative;
+  padding: 16px 18px 16px 62px;
+  border-radius: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+.how-steps li::before {
+  content: counter(step);
+  position: absolute;
+  left: 18px;
+  top: 16px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 14px;
+  color: white;
+  background: linear-gradient(135deg, #9333ea, #db2777);
+}
+.how-steps h3 { margin: 0; font-family: var(--font-display); font-size: 15px; font-weight: 600; color: var(--text); }
+.how-steps p { margin: 4px 0 0; font-size: 13px; line-height: 1.55; color: var(--muted); }
+.guide-links { margin: 14px 0 0; font-size: 13px; color: var(--muted); }
+.guide-links a { color: var(--accent-text); }
+.faq { border-top: 1px solid var(--border); }
+.faq details { border-bottom: 1px solid var(--border); }
+.faq summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 14px 28px 14px 0;
+  position: relative;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text);
+}
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after { content: '+'; position: absolute; right: 4px; top: 12px; font-size: 18px; color: var(--accent-text); }
+.faq details[open] summary::after { content: '–'; }
+.faq details p { margin: 0 0 16px; font-size: 13px; line-height: 1.6; color: var(--muted); }
