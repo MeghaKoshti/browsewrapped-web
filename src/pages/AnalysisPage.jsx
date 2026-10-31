@@ -81,7 +81,7 @@ export default function AnalysisPage() {
   if (completed) {
     const actions = (
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
-        <ShareButton analysisId={id} />
+        <ShareButton analysisId={id} report={analysis.result} />
         <DeleteReportButton analysisId={id} deleteToken={deleteToken} />
       </div>
     )

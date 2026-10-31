@@ -11,6 +11,10 @@ import { siteDomain } from './site'
 
 export const CARD_WIDTH = 1080
 export const CARD_HEIGHT = 1350
+// Link previews (og:image) on WhatsApp, X, LinkedIn and Slack.
+export const OG_WIDTH = 1200
+export const OG_HEIGHT = 630
+export const OG_MAX_BYTES = 300 * 1024
 
 export const DISPLAY_FONT = '"Space Grotesk", system-ui, sans-serif'
 export const MONO_FONT = '"DM Mono", "Courier New", monospace'
@@ -219,6 +223,94 @@ export function drawPersonaCard(ctx, data) {
   }
 }
 
+// The same card in the 1200×630 link-preview shape: persona on the left,
+// top topics on the right, the site address in the footer.
+export function drawOgCard(ctx, data) {
+  const W = OG_WIDTH
+  const H = OG_HEIGHT
+  const PAD = 64
+  const text = '#eaeaf4'
+  const muted = '#9a9ab8'
+
+  ctx.fillStyle = '#06060e'
+  ctx.fillRect(0, 0, W, H)
+  const glow = ctx.createRadialGradient(W * 0.2, 0, 0, W * 0.2, 0, 640)
+  glow.addColorStop(0, hexToRgba(data.color, 0.32))
+  glow.addColorStop(1, hexToRgba(data.color, 0))
+  ctx.fillStyle = glow
+  ctx.fillRect(0, 0, W, H)
+  ctx.textBaseline = 'alphabetic'
+  ctx.textAlign = 'left'
+
+  ctx.fillStyle = muted
+  ctx.font = `500 20px ${MONO_FONT}`
+  ctx.fillText('B R O W S E W R A P P E D', PAD, PAD + 14)
+  ctx.textAlign = 'right'
+  ctx.fillText(`${data.year} WRAPPED`, W - PAD, PAD + 14)
+  ctx.textAlign = 'left'
+
+  // Left column: who you are
+  const leftW = 620
+  let y = 190
+  ctx.fillStyle = data.color
+  ctx.font = `500 22px ${MONO_FONT}`
+  ctx.fillText('YOU ARE', PAD, y)
+  ctx.font = `700 76px ${DISPLAY_FONT}`
+  const gradient = ctx.createLinearGradient(PAD, 0, PAD + leftW, 0)
+  gradient.addColorStop(0, '#a855f7')
+  gradient.addColorStop(0.55, '#f472b6')
+  gradient.addColorStop(1, '#fb923c')
+  ctx.fillStyle = gradient
+  const titleLines = wrapText(data.title, leftW, (t) => ctx.measureText(t).width, 2)
+  for (const line of titleLines) {
+    y += 80
+    ctx.fillText(line, PAD, y)
+  }
+  y += 52
+  ctx.fillStyle = muted
+  ctx.font = `400 26px ${DISPLAY_FONT}`
+  for (const line of wrapText(data.description, leftW, (t) => ctx.measureText(t).width, titleLines.length > 1 ? 2 : 3)) {
+    ctx.fillText(line, PAD, y)
+    y += 38
+  }
+
+  // Right column: top topics
+  const colX = PAD + leftW + 60
+  const colW = W - PAD - colX
+  let ty = 190
+  ctx.fillStyle = muted
+  ctx.font = `500 18px ${MONO_FONT}`
+  ctx.fillText('TOP TOPICS', colX, ty)
+  const maxPct = Math.max(...data.topTopics.map((t) => t.percentage || 0), 1)
+  for (const topic of data.topTopics) {
+    ty += 70
+    ctx.fillStyle = text
+    ctx.font = `600 24px ${DISPLAY_FONT}`
+    ctx.fillText(wrapText(topic.name, colW - 80, (t) => ctx.measureText(t).width, 1)[0], colX, ty)
+    ctx.fillStyle = muted
+    ctx.font = `500 20px ${MONO_FONT}`
+    ctx.textAlign = 'right'
+    ctx.fillText(`${topic.percentage}%`, W - PAD, ty)
+    ctx.textAlign = 'left'
+    roundRect(ctx, colX, ty + 14, Math.max(8, (topic.percentage / maxPct) * colW), 10, 5)
+    ctx.fillStyle = topic.color
+    ctx.fill()
+  }
+
+  ctx.fillStyle = 'rgba(255,255,255,0.08)'
+  ctx.fillRect(PAD, H - 92, W - PAD * 2, 2)
+  ctx.fillStyle = muted
+  ctx.font = `400 20px ${MONO_FONT}`
+  ctx.fillText(data.dateRange, PAD, H - 50)
+  if (data.site) {
+    ctx.textAlign = 'right'
+    ctx.fillStyle = text
+    ctx.font = `500 22px ${MONO_FONT}`
+    ctx.fillText(data.site, W - PAD, H - 50)
+    ctx.textAlign = 'left'
+  }
+}
+
 // Canvas text silently falls back to a system font if the web font is not
 // loaded yet, so load the exact faces the images use first.
 export async function loadCardFonts() {
@@ -248,6 +340,10 @@ export async function renderPng(width, height, draw) {
 
 export function renderPersonaCardPng(data) {
   return renderPng(CARD_WIDTH, CARD_HEIGHT, (ctx) => drawPersonaCard(ctx, data))
+}
+
+export function renderOgCardPng(data) {
+  return renderPng(OG_WIDTH, OG_HEIGHT, (ctx) => drawOgCard(ctx, data))
 }
 
 export function downloadBlob(blob, filename) {

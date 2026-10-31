@@ -1,9 +1,19 @@
 import { defineConfig } from 'vitest/config'
+import { loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 
-export default defineConfig({
-  plugins: [react(), tailwindcss()],
+// Link previews need absolute image URLs, so index.html says %SITE_URL% and
+// this fills in VITE_PUBLIC_URL (empty: a root-relative URL, fine for local use).
+function siteUrlPlugin(siteUrl) {
+  return {
+    name: 'site-url',
+    transformIndexHtml: (html) => html.replaceAll('%SITE_URL%', siteUrl),
+  }
+}
+
+export default defineConfig(({ mode }) => ({
+  plugins: [react(), tailwindcss(), siteUrlPlugin(String(loadEnv(mode, process.cwd(), '').VITE_PUBLIC_URL || '').replace(/\/+$/, ''))],
   build: {
     rolldownOptions: {
       output: {
@@ -38,4 +48,4 @@ export default defineConfig({
     // Full report pages render a lot of SVG; give slow CI runners headroom.
     testTimeout: 15000,
   },
-})
+}))

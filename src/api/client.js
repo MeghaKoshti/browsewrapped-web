@@ -70,9 +70,20 @@ export async function deleteAnalysis(id, deleteToken) {
 
 // Creates a public share link. Pass analysisId for stored analyses, or the
 // report itself (sample data, Chrome import). The API strips private fields.
-export async function createShareLink({ analysisId, report }) {
-  const body = analysisId ? { analysis_id: analysisId } : { report }
-  const { data } = await http.post('/v1/shared_reports', body)
+// `card` is an optional 1200×630 PNG for link previews; with it the request
+// is multipart and the report travels as a JSON string field.
+// Returns { token, path, preview_url, delete_token, expires_at }.
+export async function createShareLink({ analysisId, report, card }) {
+  if (!card) {
+    const body = analysisId ? { analysis_id: analysisId } : { report }
+    const { data } = await http.post('/v1/shared_reports', body)
+    return data
+  }
+  const form = new FormData()
+  if (analysisId) form.append('analysis_id', analysisId)
+  else form.append('report', JSON.stringify(report))
+  form.append('card', card, 'card.png')
+  const { data } = await http.post('/v1/shared_reports', form, { headers: { 'Content-Type': 'multipart/form-data' } })
   return data
 }
 

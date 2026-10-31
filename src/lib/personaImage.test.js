@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
 import {
-  buildPersonaCardData, personaCardFilename, wrapText, drawPersonaCard, renderPersonaCardPng,
+  buildPersonaCardData, personaCardFilename, wrapText, drawPersonaCard, renderPersonaCardPng, drawOgCard, OG_WIDTH, OG_HEIGHT,
 } from './personaImage'
 import report from '../test/fixtures/report.json'
 
@@ -105,6 +105,15 @@ describe('persona card watermark', () => {
     const ctx = fakeContext()
     drawPersonaCard(ctx, buildPersonaCardData(report, { site: 'browsewrapped.app' }))
     expect(ctx.texts).toEqual(expect.arrayContaining(['Aug 2, 2026 – Sep 30, 2026', 'browsewrapped.app']))
+  })
+})
+
+describe('drawOgCard', () => {
+  it('draws the 1200×630 link-preview card with the persona, topics and site', () => {
+    const ctx = fakeContext()
+    drawOgCard(ctx, buildPersonaCardData(report, { site: 'browsewrapped.app' }))
+    expect(ctx.texts).toEqual(expect.arrayContaining(['YOU ARE', 'The Builder', 'TOP TOPICS', 'Programming', '39.6%', 'browsewrapped.app']))
+    expect([OG_WIDTH, OG_HEIGHT]).toEqual([1200, 630])
   })
 })
 
