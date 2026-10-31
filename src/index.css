@@ -518,7 +518,17 @@ input[type="email"]::placeholder { color: #6b6b88; }
   line-height: 1;
   color: var(--text);
 }
-.plan-regular { font-size: 1.3rem; font-weight: 500; color: var(--muted); letter-spacing: 0; }
+.plan-regular {
+  font-family: var(--font-mono);
+  font-size: 1.2rem;
+  font-weight: 400;
+  color: var(--muted);
+  letter-spacing: 0;
+  /* In Space Grotesk a mid-height strike turns the flagged "1" into a "4"
+     (₹199 read as ₹499), so the old price uses the mono face and a thin line. */
+  text-decoration-thickness: 1px;
+  text-decoration-color: rgba(234,234,244,0.7);
+}
 .plan-note { margin: 0 0 8px; font-size: 14px; line-height: 1.55; }
 .plan-active { margin: 0; font-size: 14px; color: #6ee7b7; }
 .plan-table td { color: var(--text); }
