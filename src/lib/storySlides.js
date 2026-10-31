@@ -267,7 +267,8 @@ function drawThenVsNow(ctx, s) {
   text(ctx, `My last ${s.windowDays} days vs the ${s.windowDays} before`, PAD, 470, { font: `400 40px ${DISPLAY_FONT}`, color: MUTED })
   if (s.visitsPct != null) {
     const up = s.visitsPct >= 0
-    text(ctx, `${up ? '▲' : '▼'} ${Math.abs(s.visitsPct)}%`, PAD, 690, { font: `700 190px ${DISPLAY_FONT}`, color: up ? UP : DOWN })
+    // Plain +/− signs: arrow glyphs aren't in Space Grotesk and fall back to a huge system font.
+    text(ctx, `${up ? '+' : '−'}${Math.abs(s.visitsPct)}%`, PAD, 690, { font: `700 190px ${DISPLAY_FONT}`, color: up ? UP : DOWN })
     text(ctx, up ? 'more browsing' : 'less browsing', PAD, 770, { font: `400 48px ${DISPLAY_FONT}`, color: MUTED })
   }
   const colW = (INNER - 40) / 2
@@ -287,7 +288,7 @@ function drawThenVsNow(ctx, s) {
     text(ctx, 'BIGGEST RISER', PAD, 1380, { font: `500 28px ${MONO_FONT}`, color: MUTED })
     ctx.font = `700 72px ${DISPLAY_FONT}`
     text(ctx, wrapText(s.riser.name, INNER, measureWith(ctx), 1)[0], PAD, 1470, { font: `700 72px ${DISPLAY_FONT}` })
-    text(ctx, `▲ ${s.riser.pct}%`, PAD, 1540, { font: `500 40px ${MONO_FONT}`, color: UP })
+    text(ctx, `+${s.riser.pct}%`, PAD, 1540, { font: `500 40px ${MONO_FONT}`, color: UP })
   }
 }
 

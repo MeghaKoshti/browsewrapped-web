@@ -43,7 +43,7 @@ export default function PricingPage() {
 
   return (
     <div className="doc-page">
-      <header className="doc-header">
+      <header className="doc-header doc-header-wide">
         <Link to="/" className="doc-wordmark">BrowseWrapped</Link>
       </header>
       <main id="main" tabIndex={-1} className="pricing">
@@ -97,7 +97,7 @@ export default function PricingPage() {
 
         <h2 className="pricing-h2">What’s included</h2>
         <div className="doc-table-wrap">
-          <table className="doc-table plan-table">
+          <table className="doc-table doc-table-stack plan-table">
             <caption className="sr-only">Features of the free plan and the Wrapped Pass</caption>
             <thead>
               <tr><th scope="col">Feature</th><th scope="col">Free</th><th scope="col">Wrapped Pass</th></tr>
@@ -106,10 +106,12 @@ export default function PricingPage() {
               {PLAN_FEATURES.map((row) => (
                 <tr key={row.feature}>
                   <th scope="row">{row.feature}</th>
-                  <td><Cell value={row.free} /></td>
-                  <td>
-                    <Cell value={row.pass} />
-                    {row.soon && <span className="soon">Coming soon</span>}
+                  <td data-label="Free"><span><Cell value={row.free} /></span></td>
+                  <td data-label="Wrapped Pass">
+                    <span>
+                      <Cell value={row.pass} />
+                      {row.soon && <span className="soon">Coming soon</span>}
+                    </span>
                   </td>
                 </tr>
               ))}

@@ -709,3 +709,25 @@ input[type="email"]::placeholder { color: #6b6b88; }
 .faq summary::after { content: '+'; position: absolute; right: 4px; top: 12px; font-size: 18px; color: var(--accent-text); }
 .faq details[open] summary::after { content: '–'; }
 .faq details p { margin: 0 0 16px; font-size: 13px; line-height: 1.6; color: var(--muted); }
+
+/* Pricing content is wider than a reading page; keep the wordmark aligned. */
+.doc-header-wide { max-width: 880px; }
+
+/* On phones, tables become one card per row with labelled cells, so no
+   column hides behind a sideways scroll. */
+@media (max-width: 600px) {
+  .doc-table-stack { min-width: 0; }
+  .doc-table-stack thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .doc-table-stack tr { display: block; padding: 12px 14px; border-bottom: 1px solid var(--border); }
+  .doc-table-stack tr:last-child { border-bottom: none; }
+  .doc-table-stack th, .doc-table-stack td { display: block; padding: 0; border: none; width: auto; }
+  .doc-table-stack tbody th { width: auto; margin-bottom: 6px; }
+  .doc-table-stack td { display: grid; grid-template-columns: 104px 1fr; gap: 10px; align-items: baseline; padding: 3px 0; }
+  .doc-table-stack td::before {
+    content: attr(data-label);
+    font-family: var(--font-display);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+  }
+}

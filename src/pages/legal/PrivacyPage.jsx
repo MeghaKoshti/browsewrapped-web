@@ -74,14 +74,14 @@ export default function PrivacyPage() {
 
       <h2>What happens to your data</h2>
       <div className="doc-table-wrap">
-        <table className="doc-table">
+        <table className="doc-table doc-table-stack">
           <caption className="sr-only">Each kind of data, where it goes and how long it is kept</caption>
           <thead>
             <tr><th scope="col">Data</th><th scope="col">Where it goes</th><th scope="col">How long</th></tr>
           </thead>
           <tbody>
             {DATA_FLOW.map((row) => (
-              <tr key={row.what}><th scope="row">{row.what}</th><td>{row.where}</td><td>{row.kept}</td></tr>
+              <tr key={row.what}><th scope="row">{row.what}</th><td data-label="Where it goes"><span>{row.where}</span></td><td data-label="How long"><span>{row.kept}</span></td></tr>
             ))}
           </tbody>
         </table>

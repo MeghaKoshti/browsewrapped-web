@@ -75,7 +75,7 @@ describe('drawStorySlide', () => {
     expect(drawn[0]).toEqual(expect.arrayContaining(['MY 2026 IN TABS', 'The Builder', '1.5k', 'VISITS']))
     expect(drawn[1]).toEqual(expect.arrayContaining(['WHAT I EXPLORED', 'Programming', '39.6%', '39.6% of my visits']))
     expect(drawn[2]).toEqual(expect.arrayContaining(['WHEN I BROWSE', 'is my busiest hour', '15.6% of my browsing happens at weekends']))
-    expect(drawn[3]).toEqual(expect.arrayContaining(['THEN VS NOW', '▲ 12.2%', 'THEN', 'NOW', 'BIGGEST RISER', '▲ 35.7%']))
+    expect(drawn[3]).toEqual(expect.arrayContaining(['THEN VS NOW', '+12.2%', 'THEN', 'NOW', 'BIGGEST RISER', '+35.7%']))
     expect(drawn[4]).toEqual(expect.arrayContaining(['MY LONGEST STREAK', '11', 'days in a row', '48 of 60', '4 days']))
   })
 
