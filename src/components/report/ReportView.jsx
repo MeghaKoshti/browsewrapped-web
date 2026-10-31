@@ -98,10 +98,13 @@ export default function ReportView({ data, filename, banner = null, actions = nu
           <span className="mono" style={{ fontSize: 10, letterSpacing: '0.3em', color: 'var(--muted)', textTransform: 'uppercase' }}>
             BrowseWrapped
           </span>
-          {/* Entry count is secondary; hidden on phones so the header never overflows. */}
-          <span className="mono hidden sm:inline" style={{ fontSize: 11, color: 'var(--muted)' }}>
-            {meta?.total_entries_parsed?.toLocaleString()} entries
-            {shared ? ' · shared' : meta?.source === 'chrome_direct' ? ' · Chrome' : meta?.source === 'sample' ? ' · sample' : ' · upload'}
+          <span style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+            {/* Entry count is secondary; hidden on phones so the header never overflows. */}
+            <span className="mono hidden sm:inline" style={{ fontSize: 11, color: 'var(--muted)' }}>
+              {meta?.total_entries_parsed?.toLocaleString()} entries
+              {shared ? ' · shared' : meta?.source === 'chrome_direct' ? ' · Chrome' : meta?.source === 'sample' ? ' · sample' : ' · upload'}
+            </span>
+            <Link to="/pricing" className="header-link">Pricing</Link>
           </span>
         </div>
       </header>

@@ -384,3 +384,175 @@ body {
 }
 .site-footer a:hover { color: var(--text); text-decoration: underline; }
 .site-footer p { margin: 0; }
+
+/* ── Buttons and form bits (pricing, billing, Pass) ─── */
+.btn-primary, .btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 10px 22px;
+  border-radius: 100px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 15px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.btn-primary {
+  border: none;
+  color: white;
+  /* Darker stops than the brand gradient so white text stays ≥ 4.5:1. */
+  background: linear-gradient(90deg, #9333ea, #db2777);
+  box-shadow: 0 8px 30px rgba(168,85,247,0.3);
+}
+.btn-primary:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 10px 36px rgba(168,85,247,0.42); }
+.btn-secondary {
+  border: 1px solid rgba(168,85,247,0.45);
+  background: rgba(168,85,247,0.1);
+  color: var(--accent-text);
+}
+.btn-secondary:hover:not(:disabled) { background: rgba(168,85,247,0.18); }
+.btn-primary:disabled, .btn-secondary:disabled { opacity: 0.7; cursor: progress; }
+.text-link, .text-button {
+  color: var(--accent-text);
+  font-size: 14px;
+  text-underline-offset: 3px;
+}
+.text-button { background: none; border: none; padding: 0; cursor: pointer; text-decoration: underline; font: inherit; }
+.header-link { font-size: 13px; color: var(--muted); text-decoration: none; }
+.header-link:hover { color: var(--text); }
+.form-error { margin: 8px 0 0; font-size: 13px; color: #fca5a5; }
+input[type="email"] {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--border-hi);
+  background: var(--void);
+  color: var(--text);
+  font-size: 15px;
+  font-family: var(--font-body);
+}
+input[type="email"]::placeholder { color: #6b6b88; }
+
+/* ── Status screens (billing, sign-in) ──────────────── */
+.status-emoji { font-size: 40px; line-height: 1; }
+.status-title { font-family: var(--font-display); font-weight: 600; font-size: 20px; color: var(--text); margin: 0; }
+.status-body { font-size: 14px; line-height: 1.6; color: var(--muted); margin: 0; }
+.status-body strong { color: var(--text); font-weight: 600; overflow-wrap: anywhere; }
+.status-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px 20px; }
+
+/* ── Pricing ────────────────────────────────────────── */
+.pricing {
+  max-width: 880px;
+  margin: 0 auto;
+  padding-top: 40px;
+  outline: none;
+  color: var(--muted);
+}
+.pricing h1 {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 6.5vw, 3.4rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  color: var(--text);
+  margin: 0;
+  max-width: 16ch;
+}
+.pricing-intro { font-size: 1.05rem; line-height: 1.6; max-width: 60ch; margin: 18px 0 28px; }
+.pricing-h2 { font-family: var(--font-display); font-size: 1.25rem; font-weight: 600; color: var(--text); margin: 48px 0 14px; }
+.pricing-small { font-size: 13px; line-height: 1.6; max-width: 68ch; }
+.pricing-small a { color: var(--accent-text); }
+
+.currency-toggle {
+  display: inline-flex;
+  padding: 4px;
+  border-radius: 100px;
+  border: 1px solid var(--border-hi);
+  background: var(--surface);
+  margin-bottom: 18px;
+}
+.currency-toggle button {
+  min-height: 36px;
+  padding: 6px 16px;
+  border: none;
+  border-radius: 100px;
+  background: none;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  cursor: pointer;
+}
+.currency-toggle button[aria-pressed="true"] { background: var(--surface-2); color: var(--text); box-shadow: inset 0 0 0 1px rgba(168,85,247,0.5); }
+
+.plans { display: grid; grid-template-columns: 1fr; gap: 16px; }
+@media (min-width: 720px) { .plans { grid-template-columns: 2fr 3fr; } }
+.plan {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 26px 24px;
+  border-radius: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+.plan h2 { font-family: var(--font-display); font-size: 1rem; font-weight: 600; color: var(--text); margin: 0; }
+.plan-pass {
+  border-color: rgba(168,85,247,0.45);
+  background: radial-gradient(ellipse 80% 90% at 100% 0%, rgba(168,85,247,0.16), transparent 70%), var(--surface);
+}
+.plan-price {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin: 4px 0 0;
+  font-family: var(--font-display);
+  font-size: clamp(2.6rem, 9vw, 3.4rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: var(--text);
+}
+.plan-regular { font-size: 1.3rem; font-weight: 500; color: var(--muted); letter-spacing: 0; }
+.plan-note { margin: 0 0 8px; font-size: 14px; line-height: 1.55; }
+.plan-active { margin: 0; font-size: 14px; color: #6ee7b7; }
+.plan-table td { color: var(--text); }
+.plan-table .tick { color: #6ee7b7; font-weight: 700; }
+.plan-table .dash { color: var(--muted); }
+.soon {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 8px;
+  border-radius: 100px;
+  border: 1px solid rgba(245,158,11,0.4);
+  color: #fcd34d;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.pass-form { display: flex; flex-direction: column; gap: 8px; width: 100%; max-width: 420px; }
+.pass-form label { font-family: var(--font-display); font-size: 14px; font-weight: 600; color: var(--text); }
+.pass-form-help { margin: 0; font-size: 12px; line-height: 1.5; color: var(--muted); }
+
+.restore {
+  margin-top: 48px;
+  padding: 22px 24px;
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  text-align: left;
+  width: 100%;
+}
+.restore h2 { font-family: var(--font-display); font-size: 1.05rem; font-weight: 600; color: var(--text); margin: 0 0 6px; }
+.restore p { margin: 0 0 12px; font-size: 14px; line-height: 1.55; color: var(--muted); }
+.restore strong { color: var(--text); overflow-wrap: anywhere; }
+.restore-row { display: flex; flex-wrap: wrap; gap: 10px; }
+.restore-row input { flex: 1 1 220px; width: auto; }
+.restore-sent { margin: 0; }
+/* Inside a status card the restore form sits flush with the card. */
+.card .restore { margin-top: 4px; padding: 18px 0 0; border: none; border-top: 1px solid var(--border); border-radius: 0; background: none; }

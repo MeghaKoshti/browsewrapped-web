@@ -94,3 +94,40 @@ export async function analyzeChrome() {
   const { data } = await http.get('/v1/chrome')
   return data
 }
+
+// ── Wrapped Pass ─────────────────────────────────────────────────────────
+
+// Bearer header for endpoints that need a signed-in Pass holder.
+export const authHeaders = (accessToken) => (accessToken ? { Authorization: `Bearer ${accessToken}` } : {})
+
+// { plan, prices: { INR: { amount, early_bird_amount }, USD: … }, early_bird_until, valid_days }
+// Amounts are in paise / cents.
+export async function getPricing({ signal } = {}) {
+  const { data } = await http.get('/v1/pricing', { signal })
+  return data
+}
+
+// Starts a hosted checkout and returns { checkout_url }. The server picks the
+// price; the client only says which currency.
+export async function createCheckout({ email, currency }) {
+  const { data } = await http.post('/v1/checkouts', { email, currency, plan: 'wrapped_pass' })
+  return data
+}
+
+// Always answers 202, whether or not the email has a Pass.
+export async function requestMagicLink(email) {
+  await http.post('/v1/sessions/magic_link', { email })
+}
+
+// Swaps a single-use email link token for { access_token, email, pass_valid_until }.
+// POST, so the token never lands in server logs.
+export async function verifyMagicLink(token) {
+  const { data } = await http.post('/v1/sessions/verify', { token })
+  return data
+}
+
+// { email, pass_valid_until, has_pass }; 401 when the token is missing or expired.
+export async function getMe(accessToken, { signal } = {}) {
+  const { data } = await http.get('/v1/me', { headers: authHeaders(accessToken), signal })
+  return data
+}

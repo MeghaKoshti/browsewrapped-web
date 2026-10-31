@@ -38,6 +38,7 @@ This repo is the **React frontend**. The analysis happens in the Rails API: [bro
 - **Knowledge map:** an interactive graph of topic clusters (drag to explore)
 - **Large files:** big uploads are analysed in the background; `/analyses/:id` shows a processing screen and polls until the report is ready
 - **Delete my data now:** the report page has a "Delete this report now" button that removes the stored analysis from the API straight away (it uses the one-time delete token from the upload, kept in `sessionStorage` for that tab)
+- **Wrapped Pass:** a pricing page in ₹ or $, checkout, Pass activation and "Restore my Pass" by email (see [Pricing and the Wrapped Pass](#pricing-and-the-wrapped-pass))
 - **Share links:** "Share my report" creates a public `/r/:token` page with aggregated stats only (no URLs, titles, searches or site names), which you can delete at any time
 - **Accessible and responsive:** works from 375 px phones up, keyboard friendly (skip link, visible focus), WCAG AA contrast, and every chart has a text alternative
 - **Friendly errors:** unsupported or empty files, databases that aren't browser history or were copied half-written, oversized uploads and rate limits (with the real wait from `Retry-After`) get a plain-English message instead of a crash
@@ -53,6 +54,17 @@ What the upload page tells visitors, and what actually happens:
 - **Delete now:** the upload response carries a one-time `delete_token`. The web app keeps it in `sessionStorage` (`bw.deleteTokens`, a map of analysis id to token) and sends it as `X-Delete-Token` to `DELETE /api/v1/analyses/:id`. Only the tab that uploaded the file can delete it early.
 - **AI categorisation:** up to 50 domain names the rules don't recognise (for example `example.com`) may be sent to Google Gemini. Never full URLs, page titles or searches.
 - **Share links** contain aggregated stats and topics only and expire after 30 days.
+
+## Pricing and the Wrapped Pass
+
+The Wrapped Pass is a one-time payment (no subscription) that unlocks extra features for 12 months. The API owns prices, checkout and entitlements; the web app only shows them.
+
+- **`/pricing`** reads `GET /api/v1/pricing` and shows the free vs Pass table, in ₹ for an `en-IN`-style locale or an Indian timezone and in $ otherwise, with a manual ₹/$ toggle. The early-bird price applies until the API's `early_bird_until`. Pass features that aren't built yet are marked "Coming soon".
+- **Get the Pass** asks for an email, calls `POST /api/v1/checkouts` and redirects to the hosted checkout (only `http(s)` URLs are followed).
+- **`/billing/success`** polls `GET /api/v1/me` every 2 s until the webhook has created the Pass, and shows a help message after 30 s. With no session on the device it emails a sign-in link instead. In development the fake checkout adds `?token=` so the whole flow can be clicked through locally.
+- **`/billing/cancel`** confirms nothing was charged.
+- **Restore my Pass** emails a single-use sign-in link (`POST /api/v1/sessions/magic_link`). The link opens **`/auth/verify?token=`**, which POSTs the token to `/api/v1/sessions/verify` once, removes it from the address bar and stores the session token in `localStorage` (`bw.passToken`, sent as `Authorization: Bearer`).
+- **`usePass()`** (`src/pass/passContext.js`) gives any component `{ status, hasPass, email, validUntil, refresh, signIn, signOut }`. `PassProvider` checks a stored token with `/me` once per page load and forgets it on a 401.
 
 ## Legal pages
 
