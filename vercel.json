@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/guide/:browser(chrome|firefox|safari|edge)",
+      "destination": "/guide/:browser/index.html"
+    },
+    {
       "source": "/((?!api/).*)",
       "destination": "/index.html"
     }

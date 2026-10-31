@@ -36,8 +36,24 @@ export async function writePrerenderedPages(outDir, base, { lastmod = new Date()
   await writeFile(path.join(outDir, 'robots.txt'), buildRobots(base))
 }
 
+// /guide/chrome → dist/guide/chrome/index.html, as vercel.json's rewrite does,
+// so `vite preview` shows the prerendered page instead of the SPA shell.
+export function guideHtmlPath(url) {
+  const match = /^\/guide\/([a-z]+)\/?(\?.*)?$/.exec(url || '')
+  return match && GUIDES.some((g) => g.id === match[1]) ? `/guide/${match[1]}/index.html` : null
+}
+
 export default function seoPlugin(base) {
   return [
+    {
+      name: 'seo-preview-guides',
+      configurePreviewServer(server) {
+        server.middlewares.use((req, _res, next) => {
+          req.url = guideHtmlPath(req.url) || req.url
+          next()
+        })
+      },
+    },
     { name: 'seo-head', transformIndexHtml: (html) => pageHtml(html, LANDING, base) },
     {
       name: 'seo-prerender',

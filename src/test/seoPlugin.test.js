@@ -2,7 +2,7 @@ import { describe, it, expect, afterEach } from 'vitest'
 import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
-import { writePrerenderedPages, pageHtml, siteBaseUrl } from '../../scripts/seoPlugin.js'
+import { writePrerenderedPages, pageHtml, siteBaseUrl, guideHtmlPath } from '../../scripts/seoPlugin.js'
 import { GUIDES, LANDING } from '../lib/seo'
 
 const TEMPLATE = `<!doctype html><html><head>
@@ -50,5 +50,14 @@ describe('seo build plugin', () => {
     expect(png.subarray(1, 4).toString()).toBe('PNG')
     expect([png.readUInt32BE(16), png.readUInt32BE(20)]).toEqual([1200, 630])
     expect(png.length).toBeLessThan(300 * 1024)
+  })
+})
+
+describe('guideHtmlPath (vite preview)', () => {
+  it('maps known guide URLs to their prerendered HTML, like the Vercel rewrite', () => {
+    expect(guideHtmlPath('/guide/chrome')).toBe('/guide/chrome/index.html')
+    expect(guideHtmlPath('/guide/edge/?ref=share')).toBe('/guide/edge/index.html')
+    expect(guideHtmlPath('/guide/opera')).toBeNull()
+    expect(guideHtmlPath('/pricing')).toBeNull()
   })
 })

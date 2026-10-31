@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import vercel from '../../vercel.json'
+import { GUIDES } from '../lib/seo'
 
 // vercel.json is only read by Vercel, so guard the parts the app relies on.
 const matches = (source, path) => new RegExp(`^${source}$`).test(path)
@@ -10,10 +11,16 @@ const directives = (csp) => Object.fromEntries(csp.split(';').map((d) => d.trim(
 
 describe('vercel.json', () => {
   it('serves index.html for client-side routes so deep links work', () => {
-    const [rewrite] = vercel.rewrites
+    const rewrite = vercel.rewrites.at(-1)
     expect(rewrite.destination).toBe('/index.html')
     for (const path of ['/', '/results', '/r/abc123', '/analyses/42']) expect(matches(rewrite.source, path)).toBe(true)
     expect(matches(rewrite.source, '/api/v1/sample')).toBe(false)
+  })
+
+  it('serves the prerendered guide HTML at /guide/<browser>, before the SPA fallback', () => {
+    const [guide] = vercel.rewrites
+    expect(guide.destination).toBe('/guide/:browser/index.html')
+    expect(guide.source.match(/\((.*)\)/)[1].split('|').sort()).toEqual(GUIDES.map((g) => g.id).sort())
   })
 
   it('sends the security headers on every page', () => {
