@@ -2,6 +2,7 @@ import { useState, useRef, useCallback, useEffect } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { createAnalysis, analyzeChrome, fetchSampleReport, canImportLocalChrome } from '../api/client'
 import { errorMessage } from '../api/errorMessage'
+import { withWakeRetry, WAKING_MESSAGE } from '../api/wake'
 import UrlStream from '../components/ui/UrlStream'
 import ExportGuide from '../components/upload/ExportGuide'
 import { detectBrowser, detectOS } from '../lib/exportGuide'
@@ -47,10 +48,12 @@ export default function UploadPage() {
     setProgress(0)
     setLoadingMsg('Uploading…')
     try {
-      const analysis = await createAnalysis(file, (p) => {
+      // The free API sleeps when idle; a request that never reached it is
+      // retried while it wakes up.
+      const analysis = await withWakeRetry(() => createAnalysis(file, (p) => {
         setProgress(p)
         if (p === 100) setLoadingMsg('Analyzing patterns…')
-      })
+      }), { onWaking: () => setLoadingMsg(WAKING_MESSAGE) })
       saveAnalysisDeleteToken(analysis.id, analysis.delete_token)
       // Completed analyses carry their result, so the next page can render it
       // straight away; pending ones are polled there.
@@ -79,7 +82,7 @@ export default function UploadPage() {
     setProgress(0)
     setLoadingMsg('Loading sample report…')
     try {
-      const data = await fetchSampleReport()
+      const data = await withWakeRetry(fetchSampleReport, { onWaking: () => setLoadingMsg(WAKING_MESSAGE) })
       onSuccess(data, 'Sample data')
     } catch (err) {
       onError(errorMessage(err, 'Could not load the sample report'))

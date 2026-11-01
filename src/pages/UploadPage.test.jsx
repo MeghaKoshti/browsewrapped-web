@@ -58,6 +58,19 @@ describe('UploadPage', () => {
     expect(await screen.findByText('results for Sample data (1540 visits)')).toBeInTheDocument()
   })
 
+  it('says the server is waking up and retries when the free API is asleep', async () => {
+    vi.mocked(fetchSampleReport)
+      .mockRejectedValueOnce(Object.assign(new Error('Network Error'), { code: 'ERR_NETWORK' }))
+      .mockResolvedValueOnce(report)
+    renderUpload()
+
+    await userEvent.click(screen.getByRole('button', { name: /try with sample data/i }))
+
+    expect(await screen.findByText(/waking up the server/i)).toBeInTheDocument()
+    expect(await screen.findByText('results for Sample data (1540 visits)', {}, { timeout: 5000 })).toBeInTheDocument()
+    expect(fetchSampleReport).toHaveBeenCalledTimes(2)
+  })
+
   it('shows the API error when the sample report cannot be loaded', async () => {
     vi.mocked(fetchSampleReport).mockRejectedValue({
       response: { status: 503, data: { error: { code: 'sample_unavailable', message: 'Sample unavailable' }, error_message: 'Sample unavailable' } },

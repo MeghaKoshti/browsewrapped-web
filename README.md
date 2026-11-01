@@ -4,6 +4,8 @@
 
 **BrowseWrapped turns your browser history into a "Spotify Wrapped"-style report**: what you explored, when you browse, which topics are growing, and a knowledge map of your interests.
 
+**Live demo: [browsewrapped.vercel.app](https://browsewrapped.vercel.app)** · click **Try with sample data**, no upload needed. The API runs on a free plan that sleeps when idle, so the first request can take up to a minute while it wakes up.
+
 This repo is the **React frontend**. The analysis happens in the Rails API: [browsewrapped-api](https://github.com/MeghaKoshti/browsewrapped-api). For how the pieces fit together and why, see [Architecture & decisions](https://github.com/MeghaKoshti/browsewrapped-api#architecture--decisions).
 
 ![BrowseWrapped results page](docs/screenshots/wrapped.jpg)
@@ -121,14 +123,37 @@ npm run build
 
 ## Deploy
 
-The frontend is a static site, set up for [Vercel](https://vercel.com). The API deploys separately (see [browsewrapped-api](https://github.com/MeghaKoshti/browsewrapped-api#deploy-flyio)).
+**Live setup (all free tiers):**
+
+| Part | Where | URL |
+|---|---|---|
+| Web app (this repo) | Vercel Hobby | https://browsewrapped.vercel.app |
+| Rails API | Render free web service (Docker, Singapore) | https://browsewrapped-api.onrender.com |
+| Database | Neon free Postgres (Singapore) | — |
+
+Vercel's Hobby plan is for non-commercial use only. Before selling anything, move to Vercel Pro or serve this build from another host.
+
+### Vercel settings
 
 1. **Import the repo in Vercel.** It detects Vite: build command `npm run build`, output directory `dist`.
-2. **Set `VITE_API_URL`** under Project → Settings → Environment Variables, for example `https://browsewrapped-api-<you>.fly.dev`. It is read at build time, so redeploy after changing it. Without it the app calls `/api` on its own origin, which only works with the Vite dev proxy. See `.env.example`.
-3. **Put the API origin in the CSP.** In `vercel.json`, replace `https://browsewrapped-api-CHANGE-ME.fly.dev` in `connect-src` with your API's origin (scheme and host only, no path). Until you do, the browser blocks every API call.
-4. **Allow the web app on the API.** Set `CORS_ORIGINS=https://<your-app>.vercel.app` on the API. It already exposes `Retry-After`, so rate-limit messages show the real wait.
+2. **Environment variables** (Project → Settings → Environment Variables). They are read at build time, so **redeploy** after changing any of them:
 
-What `vercel.json` sets up:
+   | Variable | Value |
+   |---|---|
+   | `VITE_API_URL` | `https://browsewrapped-api.onrender.com` |
+   | `VITE_LEGAL_NAME` | Operator name shown on the legal pages |
+   | `VITE_CONTACT_EMAIL` | Support / grievance email |
+   | `VITE_LEGAL_CITY` | City for the Terms' jurisdiction |
+
+   Without `VITE_API_URL` the app calls `/api` on its own origin, which only works with the Vite dev proxy. See `.env.example`.
+3. **The API origin is in the CSP.** `vercel.json` allows `https://browsewrapped-api.onrender.com` in `connect-src`. If the API moves, change it there too (scheme and host only), otherwise the browser blocks every API call. A test in `src/test/vercelConfig.test.js` guards it.
+4. **The API must allow this site.** On the API, `CORS_ORIGINS=https://browsewrapped.vercel.app`.
+
+### Free API sleeping
+
+Render's free plan stops the API after 15 minutes without visits. The first request after that fails at Render's proxy until the server is back (usually under a minute). The app handles this: `src/api/wake.js` retries the sample report, uploads and shared-report links for about a minute and shows "Waking up the server…" instead of an error. The API's own errors (rate limits, bad files, 503 with a JSON body) are never retried.
+
+### What `vercel.json` sets up
 
 - **Deep links:** every path except `/api/*` falls back to `index.html`, so `/r/:token` and `/analyses/:id` links open directly.
 - **Security headers:** a Content Security Policy (only this site's scripts and styles, Google Fonts, the API in `connect-src`, `data:`/`blob:` images for the PNG export, no framing), `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin` and a `Permissions-Policy` that turns off camera, microphone and location.
@@ -141,7 +166,7 @@ The CSP needs no `'unsafe-inline'`: styles live in `src/index.css`, and React an
 To check a production build locally:
 
 ```bash
-VITE_API_URL=https://browsewrapped-api-<you>.fly.dev npm run build
+VITE_API_URL=https://browsewrapped-api.onrender.com npm run build
 npx vite preview   # http://localhost:4173
 ```
 
@@ -149,7 +174,7 @@ The report pages, Recharts and D3 are split into separate chunks that load on de
 
 ## Project status
 
-🚧 Actively in development. Ideas on the list: year-over-year comparison and more browser import options.
+🚀 Live at [browsewrapped.vercel.app](https://browsewrapped.vercel.app). Next up: the Wrapped Pass, story-format share slides and SEO export guides (in review).
 
 ## Author
 
