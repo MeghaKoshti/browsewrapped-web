@@ -123,8 +123,19 @@ describe('PricingPage', () => {
   })
 
   it('says so when pricing cannot load', async () => {
-    vi.mocked(getPricing).mockRejectedValue(new Error('Network Error'))
+    // An API error (not a sleeping server, which is retried for up to a minute).
+    vi.mocked(getPricing).mockRejectedValue({ response: { status: 500, data: { error: { code: 'internal_error' } } } })
     renderPricing()
     expect(await screen.findByRole('alert')).toHaveTextContent('We couldn’t load the price')
+  })
+
+  it('waits for the sleeping API instead of failing straight away', async () => {
+    vi.mocked(getPricing)
+      .mockRejectedValueOnce(Object.assign(new Error('Network Error'), { code: 'ERR_NETWORK' }))
+      .mockResolvedValue(pricing)
+    renderPricing()
+    expect(await screen.findByRole('button', { name: 'Get the Pass' }, { timeout: 5000 })).toBeInTheDocument()
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+    expect(getPricing).toHaveBeenCalledTimes(2)
   })
 })

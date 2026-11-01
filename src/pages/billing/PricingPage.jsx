@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { getPricing } from '../../api/client'
+import { withWakeRetry } from '../../api/wake'
 import usePass from '../../pass/passContext'
 import GetPassForm from '../../components/pass/GetPassForm'
 import RestorePassForm from '../../components/pass/RestorePassForm'
@@ -31,7 +32,8 @@ export default function PricingPage() {
 
   useEffect(() => {
     const controller = new AbortController()
-    getPricing({ signal: controller.signal })
+    // Prices come from the API, which may be asleep on its free plan.
+    withWakeRetry(() => getPricing({ signal: controller.signal }))
       .then(setPricing)
       .catch(() => { if (!controller.signal.aborted) setLoadError(true) })
     return () => controller.abort()
