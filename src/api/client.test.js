@@ -89,4 +89,27 @@ describe('API client requests', () => {
     expect(request.url).toBe('/api/v1/analyses/42')
     expect(request.headers['X-Delete-Token']).toBe('secret-token')
   })
+  it('sends the share card as multipart, with the report as a JSON string', async () => {
+    vi.stubEnv('VITE_API_URL', '')
+    const client = await import('./client')
+    const card = new Blob(['png'], { type: 'image/png' })
+    const { request } = await captured(
+      () => client.createShareLink({ report: { persona: { title: 'The Builder' } }, card }),
+      { status: 201, body: JSON.stringify({ token: 'tok', preview_url: 'https://api/s/tok' }) },
+    )
+    expect(request.method).toBe('POST')
+    expect(request.url).toBe('/api/v1/shared_reports')
+    expect(request.body).toBeInstanceOf(FormData)
+    expect(JSON.parse(request.body.get('report'))).toEqual({ persona: { title: 'The Builder' } })
+    expect(request.body.get('card')).toBeInstanceOf(Blob)
+    expect(request.body.get('card').name).toBe('card.png')
+    expect(request.body.has('analysis_id')).toBe(false)
+  })
+
+  it('keeps the plain JSON body for shares without a card', async () => {
+    vi.stubEnv('VITE_API_URL', '')
+    const client = await import('./client')
+    const { request } = await captured(() => client.createShareLink({ analysisId: '42' }), { status: 201, body: '{}' })
+    expect(JSON.parse(request.body)).toEqual({ analysis_id: '42' })
+  })
 })

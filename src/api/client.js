@@ -70,9 +70,20 @@ export async function deleteAnalysis(id, deleteToken) {
 
 // Creates a public share link. Pass analysisId for stored analyses, or the
 // report itself (sample data, Chrome import). The API strips private fields.
-export async function createShareLink({ analysisId, report }) {
-  const body = analysisId ? { analysis_id: analysisId } : { report }
-  const { data } = await http.post('/v1/shared_reports', body)
+// `card` is an optional 1200×630 PNG for link previews; with it the request
+// is multipart and the report travels as a JSON string field.
+// Returns { token, path, preview_url, delete_token, expires_at }.
+export async function createShareLink({ analysisId, report, card }) {
+  if (!card) {
+    const body = analysisId ? { analysis_id: analysisId } : { report }
+    const { data } = await http.post('/v1/shared_reports', body)
+    return data
+  }
+  const form = new FormData()
+  if (analysisId) form.append('analysis_id', analysisId)
+  else form.append('report', JSON.stringify(report))
+  form.append('card', card, 'card.png')
+  const { data } = await http.post('/v1/shared_reports', form, { headers: { 'Content-Type': 'multipart/form-data' } })
   return data
 }
 
@@ -92,5 +103,42 @@ export async function fetchSampleReport() {
 
 export async function analyzeChrome() {
   const { data } = await http.get('/v1/chrome')
+  return data
+}
+
+// ── Wrapped Pass ─────────────────────────────────────────────────────────
+
+// Bearer header for endpoints that need a signed-in Pass holder.
+export const authHeaders = (accessToken) => (accessToken ? { Authorization: `Bearer ${accessToken}` } : {})
+
+// { plan, prices: { INR: { amount, early_bird_amount }, USD: … }, early_bird_until, valid_days }
+// Amounts are in paise / cents.
+export async function getPricing({ signal } = {}) {
+  const { data } = await http.get('/v1/pricing', { signal })
+  return data
+}
+
+// Starts a hosted checkout and returns { checkout_url }. The server picks the
+// price; the client only says which currency.
+export async function createCheckout({ email, currency }) {
+  const { data } = await http.post('/v1/checkouts', { email, currency, plan: 'wrapped_pass' })
+  return data
+}
+
+// Always answers 202, whether or not the email has a Pass.
+export async function requestMagicLink(email) {
+  await http.post('/v1/sessions/magic_link', { email })
+}
+
+// Swaps a single-use email link token for { access_token, email, pass_valid_until }.
+// POST, so the token never lands in server logs.
+export async function verifyMagicLink(token) {
+  const { data } = await http.post('/v1/sessions/verify', { token })
+  return data
+}
+
+// { email, pass_valid_until, has_pass }; 401 when the token is missing or expired.
+export async function getMe(accessToken, { signal } = {}) {
+  const { data } = await http.get('/v1/me', { headers: authHeaders(accessToken), signal })
   return data
 }

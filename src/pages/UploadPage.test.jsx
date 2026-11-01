@@ -172,4 +172,12 @@ describe('UploadPage', () => {
     expect(within(notice).getByRole('link', { name: 'Terms' })).toHaveAttribute('href', '/terms')
     expect(within(notice).getByRole('link', { name: 'Privacy Policy' })).toHaveAttribute('href', '/privacy')
   })
+  it('explains how it works in 3 steps, answers privacy questions and links the guides', () => {
+    renderUpload()
+    const steps = within(screen.getByRole('region', { name: 'How it works' })).getAllByRole('listitem')
+    expect(steps.map((s) => s.querySelector('h3').textContent)).toEqual(['Export your history', 'Upload it', 'Get your Wrapped'])
+    expect(screen.getByRole('link', { name: 'Firefox' })).toHaveAttribute('href', '/guide/firefox')
+    const faq = screen.getByRole('region', { name: 'Privacy questions' })
+    expect(within(faq).getByText('Is my history sent to an AI?')).toBeInTheDocument()
+  })
 })

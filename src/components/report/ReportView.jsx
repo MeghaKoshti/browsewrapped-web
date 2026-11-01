@@ -18,6 +18,7 @@ import TopDomains from '../domain/TopDomains'
 import TopPages from '../domain/TopPages'
 import SearchCloud from '../search/SearchCloud'
 import PeriodComparison from './PeriodComparison'
+import StoryPack from './StoryPack'
 import useDocumentTitle from '../../hooks/useDocumentTitle'
 import { KnowledgeMapSkeleton } from '../ui/Skeleton'
 
@@ -88,7 +89,8 @@ export default function ReportView({ data, filename, banner = null, actions = nu
       <header style={{ borderBottom: '1px solid var(--border)', position: 'sticky', top: 0, zIndex: 50, backdropFilter: 'blur(12px)', background: 'rgba(6,6,14,0.85)' }}>
         <div style={{ maxWidth: 980, margin: '0 auto', padding: '12px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
           <Link
-            to="/"
+            // ?ref=share tells analytics (S11) the visit came from a shared report.
+            to={shared ? '/?ref=share' : '/'}
             style={{ fontSize: 13, color: 'var(--muted)', textDecoration: 'none', transition: 'color 0.15s' }}
             onMouseEnter={(e) => e.currentTarget.style.color = 'var(--text)'}
             onMouseLeave={(e) => e.currentTarget.style.color = 'var(--muted)'}
@@ -98,10 +100,13 @@ export default function ReportView({ data, filename, banner = null, actions = nu
           <span className="mono" style={{ fontSize: 10, letterSpacing: '0.3em', color: 'var(--muted)', textTransform: 'uppercase' }}>
             BrowseWrapped
           </span>
-          {/* Entry count is secondary; hidden on phones so the header never overflows. */}
-          <span className="mono hidden sm:inline" style={{ fontSize: 11, color: 'var(--muted)' }}>
-            {meta?.total_entries_parsed?.toLocaleString()} entries
-            {shared ? ' · shared' : meta?.source === 'chrome_direct' ? ' · Chrome' : meta?.source === 'sample' ? ' · sample' : ' · upload'}
+          <span style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+            {/* Entry count is secondary; hidden on phones so the header never overflows. */}
+            <span className="mono hidden sm:inline" style={{ fontSize: 11, color: 'var(--muted)' }}>
+              {meta?.total_entries_parsed?.toLocaleString()} entries
+              {shared ? ' · shared' : meta?.source === 'chrome_direct' ? ' · Chrome' : meta?.source === 'sample' ? ' · sample' : ' · upload'}
+            </span>
+            <Link to="/pricing" className="header-link">Pricing</Link>
           </span>
         </div>
       </header>
@@ -157,6 +162,9 @@ export default function ReportView({ data, filename, banner = null, actions = nu
 
         {/* ─ Persona ─ */}
         {persona && <PersonaCard persona={persona} report={data} />}
+
+        {/* ─ Story slides (only for your own report, not someone else's share) ─ */}
+        {!shared && persona && <StoryPack report={data} />}
 
         {/* ─ Stat cards ─ */}
         <div className="grid grid-cols-1 sm:grid-cols-2" style={{ gap: 14 }}>

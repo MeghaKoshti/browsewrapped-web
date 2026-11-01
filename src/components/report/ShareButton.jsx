@@ -2,6 +2,23 @@ import { useState } from 'react'
 import { createShareLink, deleteShareLink } from '../../api/client'
 import { saveDeleteToken, forgetDeleteToken } from '../../lib/shareTokens'
 import { errorMessage } from '../../api/errorMessage'
+import { buildPersonaCardData, renderOgCardPng, OG_MAX_BYTES } from '../../lib/personaImage'
+
+// The persona card as a 1200×630 PNG for the link preview, or null when this
+// browser can't draw it (or it's too big). Sharing works without it.
+async function previewCard(report) {
+  const data = report && buildPersonaCardData(report)
+  if (!data) return null
+  try {
+    const png = await renderOgCardPng(data)
+    return png.size <= OG_MAX_BYTES ? png : null
+  } catch {
+    return null
+  }
+}
+
+// A card the API refuses (wrong size or type) shouldn't stop the share.
+const cardRejected = (err) => [413, 415, 422].includes(err?.response?.status)
 
 const pillButton = {
   padding: '10px 22px',
@@ -19,20 +36,31 @@ const linkButton = {
   background: 'none', border: 'none', padding: 0, fontSize: 12, color: 'var(--muted)', textDecoration: 'underline', cursor: 'pointer',
 }
 
-// "Share my report" → creates a public /r/:token link with aggregated stats only.
+// "Share my report" → creates a public link with aggregated stats only. The
+// link copied is the API's preview_url (/s/:token), which shows the persona
+// card in WhatsApp, X and LinkedIn previews and then opens /r/:token.
+//   analysisId – share a stored analysis (the server reads its result)
+//   report     – the report shown; sent when there's no analysisId, and used for the card
 export default function ShareButton({ analysisId, report }) {
   const [state, setState] = useState('idle') // idle | creating | created | deleting | deleted | error
   const [share, setShare] = useState(null)
   const [copied, setCopied] = useState(false)
   const [error, setError] = useState('')
 
-  const url = share ? `${window.location.origin}${share.path}` : ''
+  const url = share ? share.preview_url || `${window.location.origin}${share.path}` : ''
 
   const create = async () => {
     setState('creating')
     setError('')
     try {
-      const created = await createShareLink({ analysisId, report })
+      const card = await previewCard(report)
+      let created
+      try {
+        created = await createShareLink({ analysisId, report, card })
+      } catch (err) {
+        if (!card || !cardRejected(err)) throw err
+        created = await createShareLink({ analysisId, report })
+      }
       saveDeleteToken(created.token, created.delete_token)
       setShare(created)
       setState('created')

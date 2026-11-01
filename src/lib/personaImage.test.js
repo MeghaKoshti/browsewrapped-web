@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
 import {
-  buildPersonaCardData, personaCardFilename, wrapText, drawPersonaCard, renderPersonaCardPng,
+  buildPersonaCardData, personaCardFilename, wrapText, drawPersonaCard, renderPersonaCardPng, drawOgCard, OG_WIDTH, OG_HEIGHT,
 } from './personaImage'
 import report from '../test/fixtures/report.json'
 
@@ -36,6 +36,10 @@ describe('buildPersonaCardData', () => {
       { label: 'Longest streak', value: '11 days' },
     ])
     expect(data.topTopics.map((t) => t.name)).toEqual(['Programming', 'AI & ML', 'Tech News', 'Entertainment'])
+  })
+
+  it('carries the public site domain for the footer watermark', () => {
+    expect(buildPersonaCardData(report, { site: 'browsewrapped.app' }).site).toBe('browsewrapped.app')
   })
 
   it('never includes domains, URLs, page titles or searches', () => {
@@ -93,6 +97,31 @@ describe('drawPersonaCard', () => {
       '1.5k', 'VISITS', '25.4h', '11 days', 'TOP TOPICS', 'Programming', '39.6%',
       'Aug 2, 2026 – Sep 30, 2026',
     ]))
+  })
+})
+
+describe('persona card watermark', () => {
+  it('prints the site domain next to the date range', () => {
+    const ctx = fakeContext()
+    drawPersonaCard(ctx, buildPersonaCardData(report, { site: 'browsewrapped.app' }))
+    expect(ctx.texts).toEqual(expect.arrayContaining(['Aug 2, 2026 – Sep 30, 2026', 'browsewrapped.app']))
+  })
+})
+
+describe('drawOgCard', () => {
+  it('draws the 1200×630 link-preview card with the persona, topics and site', () => {
+    const ctx = fakeContext()
+    drawOgCard(ctx, buildPersonaCardData(report, { site: 'browsewrapped.app' }))
+    expect(ctx.texts).toEqual(expect.arrayContaining(['YOU ARE', 'The Builder', 'TOP TOPICS', 'Programming', '39.6%', 'browsewrapped.app']))
+    expect([OG_WIDTH, OG_HEIGHT]).toEqual([1200, 630])
+  })
+
+  it('draws its glow without a radial gradient, which Chromium dithers into a PNG over the 300 KB cap', () => {
+    const ctx = fakeContext()
+    const radial = vi.fn()
+    ctx.createRadialGradient = radial
+    drawOgCard(ctx, buildPersonaCardData(report))
+    expect(radial).not.toHaveBeenCalled()
   })
 })
 

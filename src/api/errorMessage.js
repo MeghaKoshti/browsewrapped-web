@@ -7,10 +7,16 @@ const FRIENDLY = {
   payload_too_large: 'That file is too big. The limit is 100 MB. Try exporting a shorter date range.',
   unsupported_media_type: 'We can’t read that file type. Upload a JSON or CSV export, or your browser’s history database (History, places.sqlite or History.db).',
   unsupported_sqlite: 'That database isn’t a browser history file. Upload History from Chrome or Edge, places.sqlite from Firefox, or History.db from Safari.',
+  pass_required: 'This needs a Wrapped Pass. Get one on the Pricing page, or restore yours with the email you paid with.',
+  invalid_email: 'Enter a valid email address, like name@example.com.',
+  invalid_currency: 'That currency isn’t available. Refresh the pricing page and try again.',
+  invalid_plan: 'That plan isn’t available. Refresh the pricing page and try again.',
+  invalid_or_expired_token: 'This sign-in link has expired or was already used. Request a new one.',
+  checkout_unavailable: 'Checkout isn’t available right now. Nothing was charged. Please try again in a few minutes.',
   corrupt_sqlite: 'That history file looks incomplete. This usually happens when it’s copied while the browser is open. Quit the browser, copy the file again and upload the new copy.',
 }
 
-const CODE_FOR_STATUS = { 413: 'payload_too_large', 415: 'unsupported_media_type', 429: 'rate_limited' }
+const CODE_FOR_STATUS = { 402: 'pass_required', 413: 'payload_too_large', 415: 'unsupported_media_type', 429: 'rate_limited' }
 
 const DEFAULT_RETRY_SECONDS = 60
 

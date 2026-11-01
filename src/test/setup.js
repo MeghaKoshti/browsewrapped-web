@@ -24,3 +24,7 @@ Object.defineProperty(HTMLElement.prototype, 'clientWidth', { configurable: true
 Object.defineProperty(HTMLElement.prototype, 'clientHeight', { configurable: true, get: () => 400 })
 Object.defineProperty(HTMLElement.prototype, 'offsetWidth', { configurable: true, get: () => 800 })
 Object.defineProperty(HTMLElement.prototype, 'offsetHeight', { configurable: true, get: () => 400 })
+
+// jsdom has no canvas. Return null like a browser without canvas support,
+// instead of jsdom's noisy "Not implemented" error.
+HTMLCanvasElement.prototype.getContext = () => null

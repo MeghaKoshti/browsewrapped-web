@@ -55,7 +55,7 @@ export default function SharedReportPage() {
         <p style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 18, color: 'var(--text)', margin: 0 }}>{error}</p>
         <button
           type="button"
-          onClick={() => navigate('/')}
+          onClick={() => navigate('/?ref=share')}
           style={{
             padding: '10px 24px', borderRadius: 100, border: '1px solid rgba(168,85,247,0.45)',
             background: 'rgba(168,85,247,0.1)', color: 'var(--accent-text)', fontFamily: 'var(--font-display)',

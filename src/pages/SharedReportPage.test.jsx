@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
-import { MemoryRouter, Routes, Route } from 'react-router-dom'
+import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom'
+import userEvent from '@testing-library/user-event'
 import SharedReportPage from './SharedReportPage'
 import { getSharedReport } from '../api/client'
 import { saveDeleteToken } from '../lib/shareTokens'
@@ -8,11 +9,16 @@ import report from '../test/fixtures/report.json'
 
 vi.mock('../api/client', () => ({ getSharedReport: vi.fn(), deleteShareLink: vi.fn() }))
 
+function HomeProbe() {
+  return <p>home{useLocation().search}</p>
+}
+
 function renderShared(token = 'tok123') {
   return render(
     <MemoryRouter initialEntries={[`/r/${token}`]}>
       <Routes>
         <Route path="/r/:token" element={<SharedReportPage />} />
+        <Route path="/" element={<HomeProbe />} />
       </Routes>
     </MemoryRouter>,
   )
@@ -26,7 +32,8 @@ describe('SharedReportPage', () => {
     renderShared()
 
     expect(await screen.findByText(/doesn’t exist or has expired/i)).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /make your own wrapped/i })).toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: /make your own wrapped/i }))
+    expect(screen.getByText('home?ref=share')).toBeInTheDocument()
   })
 
   it('renders a shared report whose period comparison is null', async () => {
@@ -56,5 +63,14 @@ describe('SharedReportPage', () => {
     expect(getSharedReport).toHaveBeenCalledWith('tok123', expect.anything())
     expect(screen.getByRole('heading', { name: 'Last 30 days vs the 30 days before' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Download image' })).toBeInTheDocument()
+    // Story slides are for your own report, not someone else's share.
+    expect(screen.queryByRole('heading', { name: 'Post your Wrapped' })).not.toBeInTheDocument()
+  })
+
+  it('tags "Make your own" links with ?ref=share', async () => {
+    vi.mocked(getSharedReport).mockResolvedValue({ token: 'tok123', report, expires_at: '2026-11-22T00:00:00Z' })
+    renderShared()
+
+    expect(await screen.findByRole('link', { name: 'Make your own →' })).toHaveAttribute('href', '/?ref=share')
   })
 })
